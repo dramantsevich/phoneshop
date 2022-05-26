@@ -26,10 +26,10 @@ public class JdbcPhoneDao implements PhoneDao{
     }
 
     public List<Phone> findAll(int offset, int limit) {
-        return jdbcTemplate.query("Select p.*, c.id, c.code\n" +
+        return jdbcTemplate.query("Select p.*, c.id, c.code as ccode \n" +
                 "from phones p\n" +
                 "inner join phone2color p2c on p.Id = p2c.phoneId\n" +
                 "inner join colors c on p2c.colorId = c.Id\n" +
-                "offset " + offset + " limit" + limit, new PhoneMapper());
+                "offset " + offset + " limit " + limit, new PhoneMapper());
     }
 }
