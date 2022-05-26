@@ -1,9 +1,7 @@
 package com.es.core.model.phone;
 
 import java.math.BigDecimal;
-import java.util.Collections;
 import java.util.Date;
-import java.util.Set;
 
 public class Phone {
     private Long id;
@@ -27,7 +25,7 @@ public class Phone {
 
     private String os;
 
-    private Set<Color> colors = Collections.EMPTY_SET;
+    private Color color;
 
     private String displayResolution;
 
@@ -105,12 +103,12 @@ public class Phone {
         this.os = os;
     }
 
-    public Set<Color> getColors() {
-        return colors;
+    public Color getColor() {
+        return color;
     }
 
-    public void setColors(Set<Color> colors) {
-        this.colors = colors;
+    public void setColor(Color color) {
+        this.color = color;
     }
 
     public String getDisplayResolution() {
