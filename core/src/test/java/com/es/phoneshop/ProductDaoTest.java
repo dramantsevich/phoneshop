@@ -1,35 +1,30 @@
 package com.es.phoneshop;
 
-import com.es.core.model.phone.JdbcPhoneDao;
-import com.es.core.model.phone.PhoneDao;
-import org.junit.Before;
+import com.es.core.model.phone.*;
 import org.junit.Test;
-import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
-import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import javax.sql.DataSource;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@ContextConfiguration("classpath:/../../main/resources/context/applicationContext-core.xml")
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration(locations = "testContext.xml")
 public class ProductDaoTest {
-    private PhoneDao phoneDao;
-
-    @Before
-    public void setUp() {
-        DataSource dataSource = new EmbeddedDatabaseBuilder()
-                .addDefaultScripts()
-                .setType(EmbeddedDatabaseType.H2)
-                .build();
-
-        phoneDao = new JdbcPhoneDao();
-        phoneDao.setDataSource(dataSource);
-    }
+    @Autowired
+    private JdbcPhoneDao phoneDao;
 
     @Test
-    public void testFindAll() {
-        assertThat(phoneDao.findAll(0, 10)).isNotNull();
-        assertThat(phoneDao.findAll(0, 10).size()).isPositive();
+    public void testFindWithLimit() {
+        List<Phone> phoneList = phoneDao.findWithLimit(0, 10);
+        Phone firstPhone = phoneList.get(0);
+
+        assertThat(phoneList).isNotNull();
+        assertThat(firstPhone.getColor()).isNotNull();
+        assertThat(phoneList.stream().findFirst()).isPresent();
+        assertThat(phoneList.size()).isEqualTo(10);
     }
 }
