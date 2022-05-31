@@ -1,11 +1,10 @@
 package com.es.core.model.phone;
 
-import org.springframework.jdbc.core.BeanPropertyRowMapper;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
-import javax.sql.DataSource;
 import java.util.List;
 import java.util.Optional;
 
@@ -13,6 +12,9 @@ import java.util.Optional;
 public class JdbcPhoneDao implements PhoneDao {
     @Resource
     private JdbcTemplate jdbcTemplate;
+
+    @Autowired
+    private PhoneMapper phoneMapper;
 
     public Optional<Phone> get(final Long key) {
         throw new UnsupportedOperationException("TODO");
@@ -27,7 +29,7 @@ public class JdbcPhoneDao implements PhoneDao {
                 "from phones p\n" +
                 "inner join phone2color p2c on p.Id = p2c.phoneId\n" +
                 "inner join colors c on p2c.colorId = c.Id\n" +
-                "group by p.id", new PhoneMapper());
+                "group by p.id", phoneMapper);
     }
 
     @Override
@@ -38,6 +40,6 @@ public class JdbcPhoneDao implements PhoneDao {
                 "inner join colors c on p2c.colorId = c.Id\n" +
                 "group by p.id\n" +
                 "order by p.id asc \n" +
-                "offset " + offset + " limit " + limit, new PhoneMapper());
+                "offset " + offset + " limit " + limit, phoneMapper);
     }
 }

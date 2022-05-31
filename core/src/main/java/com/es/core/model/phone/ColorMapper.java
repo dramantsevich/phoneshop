@@ -1,28 +1,22 @@
 package com.es.core.model.phone;
 
+import org.springframework.stereotype.Component;
+
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
+@Component
 public class ColorMapper {
     public Set<Color> mapRow(ResultSet resultSet, int rowNum) throws SQLException {
-        Set<Color> colorSet = new HashSet<>();
-
         long[] colorIds = parseColorId(resultSet.getString("colorId"));
         String[] colorCodes = parseColorCode(resultSet.getString("colorCode"));
 
-        for(int i = 0; i < colorIds.length; i++){
-            Color color = new Color();
-
-            color.setId(colorIds[i]);
-            color.setCode(colorCodes[i]);
-
-            colorSet.add(color);
-        }
-
-        return colorSet;
+        return IntStream.range(0, colorIds.length)
+                .mapToObj(i -> new Color(colorIds[i], colorCodes[i]))
+                .collect(Collectors.toSet());
     }
 
     private long[] parseColorId(String columnLabel) {
