@@ -1,6 +1,6 @@
 package com.es.core.model.phone;
 
-import org.springframework.jdbc.core.BeanPropertyRowMapper;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 
@@ -9,9 +9,12 @@ import java.util.List;
 import java.util.Optional;
 
 @Component
-public class JdbcPhoneDao implements PhoneDao{
+public class JdbcPhoneDao implements PhoneDao {
     @Resource
     private JdbcTemplate jdbcTemplate;
+
+    @Autowired
+    private PhoneMapper phoneMapper;
 
     public Optional<Phone> get(final Long key) {
         throw new UnsupportedOperationException("TODO");
@@ -21,7 +24,22 @@ public class JdbcPhoneDao implements PhoneDao{
         throw new UnsupportedOperationException("TODO");
     }
 
-    public List<Phone> findAll(int offset, int limit) {
-        return jdbcTemplate.query("select * from phones offset " + offset + " limit " + limit, new BeanPropertyRowMapper(Phone.class));
+    public List<Phone> findAll() {
+        return jdbcTemplate.query("select group_concat(c.id) as colorId, group_concat(c.code) as colorCode, p.* \n" +
+                "from phones p\n" +
+                "inner join phone2color p2c on p.Id = p2c.phoneId\n" +
+                "inner join colors c on p2c.colorId = c.Id\n" +
+                "group by p.id", phoneMapper);
+    }
+
+    @Override
+    public List<Phone> findWithLimit(int offset, int limit) {
+        return jdbcTemplate.query("select group_concat(c.id) as colorId, group_concat(c.code) as colorCode, p.* \n" +
+                "from phones p\n" +
+                "inner join phone2color p2c on p.Id = p2c.phoneId\n" +
+                "inner join colors c on p2c.colorId = c.Id\n" +
+                "group by p.id\n" +
+                "order by p.id asc \n" +
+                "offset " + offset + " limit " + limit, phoneMapper);
     }
 }

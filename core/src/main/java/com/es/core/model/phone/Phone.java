@@ -27,7 +27,7 @@ public class Phone {
 
     private String os;
 
-    private Set<Color> colors = Collections.EMPTY_SET;
+    private Set<Color> color = Collections.emptySet();
 
     private String displayResolution;
 
@@ -105,12 +105,12 @@ public class Phone {
         this.os = os;
     }
 
-    public Set<Color> getColors() {
-        return colors;
+    public Set<Color> getColor() {
+        return color;
     }
 
-    public void setColors(Set<Color> colors) {
-        this.colors = colors;
+    public void setColor(Set<Color> color) {
+        this.color = color;
     }
 
     public String getDisplayResolution() {
