@@ -1,9 +1,9 @@
-package com.es.core.cart;
+package com.es.core.dao.cart;
 
 import com.es.core.exception.OutOfStockException;
+import com.es.core.model.cart.Cart;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.Map;
 
 public interface CartService {
 
@@ -11,11 +11,7 @@ public interface CartService {
 
     void addPhone(Cart cart, Long phoneId, Long quantity) throws OutOfStockException;
 
-    /**
-     * @param items key: {@link com.es.core.model.phone.Phone#id}
-     *              value: quantity
-     */
-    void update(Map<Long, Long> items);
+    void update(Cart cart, Long phoneId, Long quantity);
 
-    void remove(Long phoneId);
+    void remove(Cart cart, Long phoneId);
 }

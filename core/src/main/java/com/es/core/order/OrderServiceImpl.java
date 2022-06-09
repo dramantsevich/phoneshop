@@ -1,6 +1,6 @@
 package com.es.core.order;
 
-import com.es.core.cart.Cart;
+import com.es.core.model.cart.Cart;
 import com.es.core.model.order.Order;
 import org.springframework.stereotype.Service;
 

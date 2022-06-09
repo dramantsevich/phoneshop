@@ -1,4 +1,4 @@
-package com.es.core.cart;
+package com.es.core.model.cart;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -7,7 +7,7 @@ import java.util.List;
 public class Cart {
     private List<CartItem> items;
     private int totalQuantity;
-    private BigDecimal totalCost;
+    private BigDecimal totalCost = BigDecimal.ZERO;
 
     public Cart() {
         this.items = new ArrayList<>();

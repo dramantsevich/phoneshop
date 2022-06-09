@@ -1,0 +1,105 @@
+package com.es.core.dao.cart;
+
+import com.es.core.dao.stock.StockDao;
+import com.es.core.exception.OutOfStockException;
+import com.es.core.exception.PhonePriceException;
+import com.es.core.model.cart.Cart;
+import com.es.core.model.cart.CartItem;
+import com.es.core.model.phone.Stock;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import javax.servlet.http.HttpServletRequest;
+import java.util.List;
+import java.util.Optional;
+
+@Service
+public class HttpSessionCartService implements CartService {
+    @Autowired
+    private StockDao stockDao;
+
+    @Autowired
+    private DefaultCartService defaultCartService;
+
+    private static final String CART_SESSION_ATTRIBUTE = HttpSessionCartService.class.getName() + ".cart";
+
+    @Override
+    public Cart getCart(HttpServletRequest request) {
+        Cart cart = (Cart) request.getSession().getAttribute(CART_SESSION_ATTRIBUTE);
+
+        if (cart == null) {
+            request.getSession().setAttribute(CART_SESSION_ATTRIBUTE, cart = new Cart());
+        }
+
+        return cart;
+    }
+
+    @Override
+    public void addPhone(Cart cart, Long phoneId, Long quantity) throws OutOfStockException {
+        if (quantity == null) {
+            throw new NullPointerException();
+        }
+
+        Optional<CartItem> cartItemOptional = defaultCartService.findCartItemForUpdate(cart, phoneId, quantity.intValue());
+        int productsAmount = cartItemOptional.map(CartItem::getQuantity).orElse(0);
+
+        Stock phone = stockDao.getPhoneById(phoneId);
+        if (phone.getPhone().getPrice() == null) {
+            throw new PhonePriceException();
+        }
+
+        if ((phone.getStock() - phone.getReserved()) < productsAmount + quantity) {
+            throw new OutOfStockException();
+        }
+
+        List<CartItem> cartList = cart.getItems();
+        CartItem cartItem = new CartItem(phone, quantity.intValue());
+
+        if (cartItemOptional.isPresent()) {
+            cartItemOptional.get().setQuantity(quantity.intValue() + productsAmount);
+        } else {
+            cartList.add(cartItem);
+        }
+
+        defaultCartService.recalculateCartQuantity(cart);
+        defaultCartService.recalculateCartTotalCost(cart);
+    }
+
+    @Override
+    public void update(Cart cart, Long phoneId, Long quantity) {
+        if (quantity == null) {
+            throw new NullPointerException();
+        }
+
+        Stock phone = stockDao.getPhoneById(phoneId);
+
+        if (phone.getPhone().getPrice() == null) {
+            throw new PhonePriceException();
+        }
+
+        if ((phone.getStock() - phone.getReserved()) < quantity) {
+            throw new OutOfStockException();
+        }
+
+        Optional<CartItem> cartItemOptional = defaultCartService.findCartItemForUpdate(cart, phoneId, quantity.intValue());
+        List<CartItem> cartList = cart.getItems();
+        CartItem cartItem = new CartItem(phone, quantity.intValue());
+
+        if (cartItemOptional.isPresent()) {
+            cartItemOptional.get().setQuantity(quantity.intValue());
+        } else {
+            cartList.add(cartItem);
+        }
+
+        defaultCartService.recalculateCartQuantity(cart);
+        defaultCartService.recalculateCartTotalCost(cart);
+    }
+
+    @Override
+    public void remove(Cart cart, Long phoneId) {
+        cart.getItems().removeIf(item -> item.getStock().getPhone().getId().equals(phoneId));
+
+        defaultCartService.recalculateCartQuantity(cart);
+        defaultCartService.recalculateCartTotalCost(cart);
+    }
+}
