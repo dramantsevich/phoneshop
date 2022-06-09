@@ -1,10 +1,12 @@
 package com.es.core.exception;
 
 import com.es.core.dto.ErrorCodeDTO;
+import com.es.core.dto.ExceptionResponseDTO;
 import com.es.core.dto.ValidationResponseDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
@@ -48,5 +50,55 @@ public class GlobalExceptionHandler {
         validationResponseDTO.setCode(ErrorCodeDTO.VALIDATION_ERROR.getCode());
 
         return new ResponseEntity<>(validationResponseDTO, null, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(value = OutOfStockException.class)
+    public ResponseEntity<?> handleOutOfStockExceptions(OutOfStockException ex) {
+        ExceptionResponseDTO exceptionResponseDTO = new ExceptionResponseDTO();
+        exceptionResponseDTO.setException("Out of stock");
+        exceptionResponseDTO.setMessage("No such quantity available ");
+        exceptionResponseDTO.setCode(ErrorCodeDTO.NOT_ACCEPTABLE.getCode());
+
+        return new ResponseEntity<>(exceptionResponseDTO, null, HttpStatus.NOT_ACCEPTABLE);
+    }
+
+    @ExceptionHandler(value = NegativeQuantityException.class)
+    public ResponseEntity<?> handleNegativeQuantityExceptions(NegativeQuantityException ex) {
+        ExceptionResponseDTO exceptionResponseDTO = new ExceptionResponseDTO();
+        exceptionResponseDTO.setException("Negative value");
+        exceptionResponseDTO.setMessage(ex.getMessage());
+        exceptionResponseDTO.setCode(ErrorCodeDTO.NEGATIVE_VALUE.getCode());
+
+        return new ResponseEntity<>(exceptionResponseDTO, null, HttpStatus.NOT_ACCEPTABLE);
+    }
+
+    @ExceptionHandler(value = PhonePriceException.class)
+    public ResponseEntity<?> handlePhonePriceExceptions(PhonePriceException ex) {
+        ExceptionResponseDTO exceptionResponseDTO = new ExceptionResponseDTO();
+        exceptionResponseDTO.setException("price is null");
+        exceptionResponseDTO.setMessage(ex.getMessage());
+        exceptionResponseDTO.setCode(ErrorCodeDTO.PRICE_IS_NULL.getCode());
+
+        return new ResponseEntity<>(exceptionResponseDTO, null, HttpStatus.NOT_ACCEPTABLE);
+    }
+
+    @ExceptionHandler(value = NullPointerException.class)
+    public ResponseEntity<?> handleNullPointerExceptions(NullPointerException ex) {
+        ExceptionResponseDTO exceptionResponseDTO = new ExceptionResponseDTO();
+        exceptionResponseDTO.setException("empty");
+        exceptionResponseDTO.setMessage("Field quantity is empty");
+        exceptionResponseDTO.setCode(ErrorCodeDTO.QUANTITY_IS_NULL.getCode());
+
+        return new ResponseEntity<>(exceptionResponseDTO, null, HttpStatus.NOT_ACCEPTABLE);
+    }
+
+    @ExceptionHandler(value = EmptyResultDataAccessException.class)
+    public ResponseEntity<?> handleEmptyResultDataAccessExceptions(EmptyResultDataAccessException ex) {
+        ExceptionResponseDTO exceptionResponseDTO = new ExceptionResponseDTO();
+        exceptionResponseDTO.setException("url");
+        exceptionResponseDTO.setMessage("is invalid URL");
+        exceptionResponseDTO.setCode(ErrorCodeDTO.ENTITY_NOT_FOUND.getCode());
+
+        return new ResponseEntity<>(exceptionResponseDTO, null, HttpStatus.NOT_FOUND);
     }
 }
