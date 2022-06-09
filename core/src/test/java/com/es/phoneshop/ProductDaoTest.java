@@ -1,5 +1,7 @@
 package com.es.phoneshop;
 
+import com.es.core.dao.phone.PhoneDao;
+import com.es.core.dao.stock.StockDao;
 import com.es.core.model.phone.*;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -23,7 +25,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 @ContextConfiguration(locations = "testContext.xml")
 public class ProductDaoTest {
     @Autowired
-    private JdbcPhoneDao phoneDao;
+    private PhoneDao phoneDao;
+
+    @Autowired
+    private StockDao stockDao;
 
     @Test
     public void testFindWithLimit() {
@@ -85,7 +90,7 @@ public class ProductDaoTest {
 
     @Test
     public void testGetPhoneByIdWithStock() {
-        Stock phone = phoneDao.getPhoneById(1011L);
+        Stock phone = stockDao.getPhoneById(1011L);
 
         assertThat(phone.getStock()).isGreaterThan(0);
         assertThat(phone.getPhone().getId()).isEqualTo(1011L);
@@ -102,7 +107,7 @@ public class ProductDaoTest {
 
     @Test
     public void testFindAllWithStock() {
-        List<Stock> stockPhones = phoneDao.findAllWithStock();
+        List<Stock> stockPhones = stockDao.findAllWithStock("");
 
         assertThat(stockPhones.size()).isEqualTo(3030);
     }
@@ -114,7 +119,7 @@ public class ProductDaoTest {
         String keyword = "Samsung";
 
         Pageable firstPage = PageRequest.of(pageNo - 1, size);
-        Page<Stock> stockPage = phoneDao.findByKeyword(firstPage, keyword);
+        Page<Stock> stockPage = stockDao.findByKeyword(firstPage, keyword);
 
         assertThat(stockPage.stream().allMatch(p -> p.getPhone().getModel()
                 .contains(keyword))).isTrue();
@@ -129,7 +134,7 @@ public class ProductDaoTest {
         String direction = "desc";
 
         Pageable firstPage = PageRequest.of(pageNo - 1, size);
-        Page<Stock> stockPage = phoneDao.findSortedPhonesByKeyword(firstPage, property, direction, keyword);
+        Page<Stock> stockPage = stockDao.findSortedPhonesByKeyword(firstPage, property, direction, keyword);
 
         assertThat(stockPage.stream().allMatch(p -> p.getPhone().getModel()
                 .contains(keyword))).isTrue();
@@ -185,6 +190,6 @@ public class ProductDaoTest {
         int size = 10;
 
         Pageable firstPage = PageRequest.of(pageNo - 1, size);
-        return phoneDao.findAll(firstPage);
+        return stockDao.findAll(firstPage);
     }
 }
