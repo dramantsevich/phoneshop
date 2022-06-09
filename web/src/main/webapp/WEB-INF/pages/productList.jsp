@@ -3,8 +3,6 @@
 <%@ taglib prefix="sf" uri="http://www.springframework.org/tags/form" %>
 <%@ taglib prefix="tags" tagdir="/WEB-INF/tags" %>
 
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-
 <tags:master pageTitle="Product List">
     <p>
         <sf:form method="get" action="/search/1">
@@ -20,9 +18,7 @@
                 <tr>
                     <td>Image</td>
                     <td>
-                        <label>
-                            Brand
-                        </label>
+                        Brand
                         <tags:sortLink sort="brand" order="asc"/>
                         <tags:sortLink sort="brand" order="desc"/>
                     </td>
@@ -53,7 +49,11 @@
                         <img src="https://raw.githubusercontent.com/andrewosipenko/phoneshop-ext-images/master/${ph.phone.imageUrl}">
                     </td>
                     <td>${ph.phone.brand}</td>
-                    <td>${ph.phone.model}</td>
+                    <td>
+                        <a href="/productDetails/${ph.phone.id}">
+                                ${ph.phone.model}
+                        </a>
+                    </td>
                     <td>
                         <c:forEach var="color" items="${ph.phone.color}">
                             ${color.code}
@@ -69,99 +69,55 @@
                     <td>
                         <input id="btn-submit" type="submit" class="btn btn-primary addToCart" name="button"
                                value="Add to cart"
-                               onclick="addToCart(${ph.phone.id})"/>
+                               onclick="addToCart(${ph.phone.id}, ${cart.totalQuantity}, ${cart.totalCost})"/>
                     </td>
                 </tr>
             </c:forEach>
         </table>
     </div>
-    <c:if test="${totalPages > 1}">
-        <div class="pagination">
-            <div class="row col-sm-10">
-                <div class="col-sm-1 page-item">
-                    <div class="col-sm-1 page-item">
-                        <c:if test="${currentPage==1}">
-                            <a><i class="material-icons">chevron_left</i></a>
-                        </c:if>
-                        <c:if test="${currentPage!=1}">
-                            <a href="/productList/ + ${currentPage - 1}?sort=${sort}&order=${order}"><i
-                                    class="material-icons">chevron_left</i></a>
-                        </c:if>
-                    </div>
-                </div>
-                <div class="col-sm-1">
-                    <c:forEach var="i" items="${numbers}">
-                        <span class="page-item">
-                      <c:choose>
-                          <c:when test="${currentPage!=i}">
-                              <a href="/productList/ + ${i}?sort=${sort}&order=${order}">${i}</a>
-                          </c:when>
-                          <c:otherwise>
-                              <span>${i}</span>
-                          </c:otherwise>
-                      </c:choose>
-                  </span>
-                    </c:forEach>
-                </div>
-                <div class="col-sm-1 page-item">
-                    <c:choose>
-                        <c:when test="${currentPage < totalPages}">
-                            <a href="/productList/ + ${currentPage + 1}?sort=${sort}$order=&{order}"><i
-                                    class="material-icons">chevron_right</i></a>
-                            <input id="${currentPage + 1}" type="hidden" class="currentPage" value="${currentPage + 1}">
-                        </c:when>
-                        <c:otherwise>
-                            <span class="page-item"><i class="material-icons">chevron_right</i></span>
-                        </c:otherwise>
-                    </c:choose>
-                </div>
-                <div class="col-sm-1">
-                    <c:choose>
-                        <c:when test="${currentPage < totalPages}">
-                            <a href="/productList/ + ${totalPages}?sort=${sort}&order=${order}">Last</a>
-                        </c:when>
-                        <c:otherwise>
-                            <span class="page-item">Last</span>
-                        </c:otherwise>
-                    </c:choose>
-                </div>
-            </div>
-        </div>
+
+    <c:set var="p" value="${currentPage}"/> <%-- current page (1-based) --%>
+    <c:set var="l" value="10"/> <%-- amount of page links to be displayed --%>
+    <c:set var="r" value="${l / 2}"/> <%-- minimum link range ahead/behind --%>
+    <c:set var="t" value="${totalPages}"/> <%-- total amount of pages --%>
+
+    <c:set var="begin" value="${((p - r) > 0 ? ((p - r) < (t - l + 1) ? (p - r) : (t - l)) : 0) + 1}"/>
+    <c:set var="end" value="${(p + r) < t ? ((p + r) > l ? (p + r) : l) : t}"/>
+
+    <c:choose>
+        <c:when test="${p != 1}">
+            <a href="/productList/ + ${1}?sort=${sort}&order=${order}">First</a>
+        </c:when>
+        <c:otherwise>
+            <span class="page-item">First</span>
+        </c:otherwise>
+    </c:choose>
+    <c:if test="${p==1}">
+        <a><i class="material-icons">chevron_left</i></a>
     </c:if>
-    </p>
+    <c:if test="${p!=1}">
+        <a href="/productList/ + ${p - 1}?sort=${sort}&order=${order}"><i
+                class="material-icons">chevron_left</i></a>
+    </c:if>
+    <c:forEach begin="${begin}" end="${end}" var="i">
+        <a href="/productList/ + ${i}?sort=${sort}&order=${order}">${i}</a>
+    </c:forEach>
+    <c:choose>
+        <c:when test="${p < t}">
+            <a href="/productList/ + ${p + 1}?sort=${sort}$order=&${order}"><i
+                    class="material-icons">chevron_right</i></a>
+        </c:when>
+        <c:otherwise>
+            <span class="page-item"><i class="material-icons">chevron_right</i></span>
+        </c:otherwise>
+    </c:choose>
+    <c:choose>
+        <c:when test="${p < t}">
+            <a href="/productList/ + ${t}?sort=${sort}&order=${order}">Last</a>
+        </c:when>
+        <c:otherwise>
+            <span class="page-item">Last</span>
+        </c:otherwise>
+    </c:choose>
 
-    <script type="text/javascript">
-        function addToCart(id) {
-            //получаю айдишник и беру по айдишнику quantity
-            var quantity = $("#" + id).val();
-
-            var Data = {
-                "id": id,
-                "quantity": quantity
-            }
-            console.log(Data);
-
-            $.ajax({
-                type: "POST",
-                url: "/ajaxCart",
-                headers: {
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/json'
-                },
-                data: JSON.stringify(Data),
-                success: function (data) {
-                    $('#feedback' + id).text(JSON.stringify(data, null, 4))
-
-                    console.log("SUCCESS : ", data);
-
-                },
-                error: function (e) {
-                    $('#feedback' + id).text(e.responseText)
-
-                    console.log("ERROR : ", e);
-
-                }
-            })
-        }
-    </script>
 </tags:master>
