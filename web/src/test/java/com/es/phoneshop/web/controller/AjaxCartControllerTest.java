@@ -4,23 +4,28 @@ import com.es.core.dto.CartItemDTO;
 import lombok.SneakyThrows;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.http.MediaType;
+import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import java.math.BigDecimal;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
+//@RunWith(SpringRunner.class)
+//@WebMvcTest(AjaxCartController.class)
+//@AutoConfigureMockMvc
 @RunWith(SpringRunner.class)
-@WebMvcTest(AjaxCartController.class)
+@WebAppConfiguration
+@ContextConfiguration(locations = { "classpath*:context/*.xml" })
 public class AjaxCartControllerTest {
-    @Autowired
-    private MockMvc mockMvc;
+    private AjaxCartController ajaxCartController = new AjaxCartController();
+    private MockMvc mockMvc = MockMvcBuilders.standaloneSetup(ajaxCartController).build();;
 
     private CartItemDTO cartItemDTO;
 
