@@ -58,12 +58,17 @@
 </head>
 <body class="product-list">
 <header>
-    <a href="../../index.jsp">
-        <h2>Home</h2>
-    </a>
+    <div>
+        <a href="../../index.jsp">
+            <h2>Home</h2>
+        </a>
+    </div>
     <div>
         <h3><a href="${pageContext.request.contextPath}/cart">Cart</a></h3>
         <h4><span id="cartTotalQuantity">quantity: ${cart.totalQuantity}</span>, <span id="cartTotalCost">$${cart.totalCost}</span></h4>
+    </div>
+    <div>
+        <a href="${pageContext.request.contextPath}/login">Login</a>
     </div>
 </header>
 <main>

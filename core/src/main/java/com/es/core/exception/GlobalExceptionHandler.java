@@ -111,4 +111,14 @@ public class GlobalExceptionHandler {
 
         return new ResponseEntity<>(exceptionResponseDTO, null, HttpStatus.NOT_FOUND);
     }
+
+    @ExceptionHandler(value = OrderNotFoundException.class)
+    public ResponseEntity<?> handleOrderNotFoundExceptions(OrderNotFoundException ex) {
+        ExceptionResponseDTO exceptionResponseDTO = new ExceptionResponseDTO();
+        exceptionResponseDTO.setException("url");
+        exceptionResponseDTO.setMessage("is invalid URL");
+        exceptionResponseDTO.setCode(ErrorCodeDTO.ENTITY_NOT_FOUND.getCode());
+
+        return new ResponseEntity<>(exceptionResponseDTO, null, HttpStatus.NOT_FOUND);
+    }
 }

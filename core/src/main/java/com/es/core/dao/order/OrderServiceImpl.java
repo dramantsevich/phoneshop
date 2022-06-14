@@ -13,9 +13,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
+import java.text.SimpleDateFormat;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -47,6 +46,11 @@ public class OrderServiceImpl implements OrderService {
         updateStock(order);
         save(order);
 
+        String pattern = "dd-M-yyyy kk:mm:ss";
+        SimpleDateFormat simpleDateFormat =new SimpleDateFormat(pattern);
+        String date = simpleDateFormat.format(new Date());
+
+        order.setDeliveryDate(date);
         order.setStatus(OrderStatus.NEW);
     }
 
@@ -89,6 +93,8 @@ public class OrderServiceImpl implements OrderService {
                         "set reserved =" + updateReserved +
                         "\n where phoneId=" + id);
             }
+
+            item.getStock().setReserved(updateReserved);
         }
     }
 
@@ -98,5 +104,50 @@ public class OrderServiceImpl implements OrderService {
                 .filter(o -> id.equals(o.getSecureId()))
                 .findAny()
                 .orElseThrow(OrderNotFoundException::new);
+    }
+
+    @Override
+    public List<Order> getOrders() {
+        return Optional.of(orderList).get();
+    }
+
+    @Override
+    public Order getOrderById(Long id) {
+        return orderList.stream()
+                .filter(o -> id.equals(o.getId()))
+                .findAny()
+                .orElseThrow(OrderNotFoundException::new);
+    }
+
+    @Override
+    public Order setStatus(Order order, OrderStatus orderStatus) {
+        if(orderStatus == OrderStatus.DELIVERED) {
+            order.setStatus(OrderStatus.DELIVERED);
+        }
+
+        if(orderStatus == OrderStatus.REJECTED) {
+            List<CartItem> orderList = order.getItems();
+
+            for (CartItem item : orderList) {
+                long id = item.getStock().getPhone().getId();
+                int quantity = item.getQuantity();
+                int stock = item.getStock().getStock();
+                int reserved = item.getStock().getReserved();
+                int updateReserved = reserved - quantity;
+
+                if ((stock - reserved) < quantity) {
+                    throw new OrderOutOfStockException();
+                } else {
+                    jdbcTemplate.update("update stocks \n" +
+                            "set reserved =" + updateReserved +
+                            "\n where phoneId=" + id);
+                }
+
+                item.getStock().setReserved(updateReserved);
+                order.setStatus(orderStatus);
+            }
+        }
+
+        return order;
     }
 }

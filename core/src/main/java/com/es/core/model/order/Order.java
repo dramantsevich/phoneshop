@@ -21,6 +21,7 @@ public class Order extends Cart
 
     private String firstName;
     private String lastName;
+    private String deliveryDate;
     private String deliveryAddress;
     private String contactPhoneNo;
 
@@ -72,6 +73,14 @@ public class Order extends Cart
 
     public void setLastName(String lastName) {
         this.lastName = lastName;
+    }
+
+    public String getDeliveryDate() {
+        return deliveryDate;
+    }
+
+    public void setDeliveryDate(String deliveryDate) {
+        this.deliveryDate = deliveryDate;
     }
 
     public String getDeliveryAddress() {
