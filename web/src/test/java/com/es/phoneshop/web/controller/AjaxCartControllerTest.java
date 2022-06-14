@@ -2,6 +2,9 @@ package com.es.phoneshop.web.controller;
 
 import com.es.core.dto.CartItemDTO;
 import lombok.SneakyThrows;
+import org.codehaus.jackson.map.ObjectMapper;
+import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.http.MediaType;
@@ -9,7 +12,9 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
 import java.math.BigDecimal;
 
@@ -22,23 +27,45 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 //@AutoConfigureMockMvc
 @RunWith(SpringRunner.class)
 @WebAppConfiguration
-@ContextConfiguration(locations = { "classpath*:context/*.xml" })
+@EnableWebMvc
+@ContextConfiguration(locations = {"classpath*:context/*.xml"})
 public class AjaxCartControllerTest {
     private AjaxCartController ajaxCartController = new AjaxCartController();
-    private MockMvc mockMvc = MockMvcBuilders.standaloneSetup(ajaxCartController).build();;
+    private MockMvc mockMvc;
 
     private CartItemDTO cartItemDTO;
+
+    ObjectMapper objectMapper = new ObjectMapper();
+
+    @Before
+    public void setUp() {
+        mockMvc = MockMvcBuilders.standaloneSetup(ajaxCartController).build();
+    }
 
     @SneakyThrows
     @Test
     public void CartTotalCalculationWorksCorrectly() {
         CartItemDTO cartItemDTO = createCartItemDTO();
-        this.mockMvc.perform(put("/ajaxCart/update")
-                .contentType(MediaType.APPLICATION_JSON))
-                .andDo(print())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id").value(cartItemDTO.getId()));
+        String jsonRequest = objectMapper.writeValueAsString(cartItemDTO);
+
+//        this.mockMvc.perform(put("/ajaxCart/update")
+//                .contentType(MediaType.APPLICATION_JSON))
+//                .andDo(print())
+//                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+////                .andExpect(status().isOk())
+//                .andExpect(content().contentTypeCompatibleWith("application/json"))
+//                .andExpect(jsonPath("$.id").value(cartItemDTO.getId()));
+
+        MvcResult result = this.mockMvc.perform(put("/ajaxCart/update")
+                        .content(jsonRequest))
+//                        .content(MediaType.APPLICATION_JSON_VALUE))
+//                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk()).andReturn();
+
+        String resultContent = result.getResponse().getContentAsString();
+        Response response = objectMapper.readValue(resultContent, Response.class);
+
+        Assert.assertTrue(response.isSuccess());
     }
 
     private CartItemDTO createCartItemDTO() {
