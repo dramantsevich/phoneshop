@@ -28,7 +28,7 @@ public class StockDaoTest {
 
     @Test
     public void testGetPhoneByIdWithStock() {
-        Stock phone = stockDao.getPhoneById(1011L);
+        Stock phone = stockDao.getPhoneById(1011L).orElseThrow(NullPointerException::new);
 
         assertThat(phone.getStock()).isGreaterThan(0);
         assertThat(phone.getPhone().getId()).isEqualTo(1011L);

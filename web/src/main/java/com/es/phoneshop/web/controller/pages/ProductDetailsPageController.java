@@ -26,7 +26,7 @@ public class ProductDetailsPageController {
     @RequestMapping(value = "/{phoneId}", method = RequestMethod.GET)
     public String productDetails(@PathVariable Long phoneId, Model model, HttpServletRequest request) {
         Cart cart = cartService.getCart(request);
-        Stock phone = stockDao.getPhoneById(phoneId);
+        Stock phone = stockDao.getPhoneById(phoneId).orElseThrow(NullPointerException::new);
 
         model.addAttribute("cart", cart);
         model.addAttribute("stock", phone);

@@ -12,6 +12,7 @@ import org.springframework.stereotype.Component;
 import javax.annotation.Resource;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 
 @Component
 public class JdbcStockDao implements StockDao {
@@ -21,15 +22,15 @@ public class JdbcStockDao implements StockDao {
     @Autowired
     private StockMapper stockMapper;
 
-    public Stock getPhoneById(Long id) {
-        return jdbcTemplate.queryForObject("select sum(s.stock) as stock, sum(s.reserved) as reserved,\n" +
+    public Optional<Stock> getPhoneById(Long id) {
+        return Optional.ofNullable(jdbcTemplate.queryForObject("select sum(s.stock) as stock, sum(s.reserved) as reserved,\n" +
                 "group_concat(c.id) as colorId, group_concat(c.code) as colorCode, p.*\n" +
                 "from phones p\n" +
                 "inner join phone2color p2c on p.Id = p2c.phoneId\n" +
                 "inner join colors c on p2c.colorId = c.Id\n" +
                 "inner join stocks s on p.id = s.phoneId\n" +
                 "where s.stock > 0 and p.id =" + id + "\n" +
-                "group by p.id", stockMapper);
+                "group by p.id", stockMapper));
     }
 
     @Override

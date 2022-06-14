@@ -5,9 +5,10 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface StockDao {
-    Stock getPhoneById(Long key);
+    Optional<Stock> getPhoneById(Long key);
 
     List<Stock> findAllWithStock(String property);
 
