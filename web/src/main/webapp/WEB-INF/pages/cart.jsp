@@ -47,12 +47,21 @@
                                         <input id="btn-submit" type="submit" class="btn btn-primary delete"
                                                name="button"
                                                value="Delete"/>
-                                            <%--                                           onclick="addToCart(${ph.phone.id}, ${cart.totalQuantity}, ${cart.totalCost})"/>--%>
                                     </form>
                                 </td>
                             </tr>
                         </c:forEach>
                     </table>
+                    <c:choose>
+                        <c:when test="${cart.items.size() > 0}">
+                            <a href="/order">
+                                <button class="btn btn-info">Order</button>
+                            </a>
+                        </c:when>
+                        <c:otherwise>
+                            <h3>Your cart is empty</h3>
+                        </c:otherwise>
+                    </c:choose>
                 </div><!-- end row -->
             </div>
         </div>
