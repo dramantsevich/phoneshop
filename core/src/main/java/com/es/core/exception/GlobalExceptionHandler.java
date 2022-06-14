@@ -85,8 +85,18 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(value = NullPointerException.class)
     public ResponseEntity<?> handleNullPointerExceptions(NullPointerException ex) {
         ExceptionResponseDTO exceptionResponseDTO = new ExceptionResponseDTO();
+        exceptionResponseDTO.setException("null");
+        exceptionResponseDTO.setMessage("Object is null");
+        exceptionResponseDTO.setCode(ErrorCodeDTO.ENTITY_NOT_FOUND.getCode());
+
+        return new ResponseEntity<>(exceptionResponseDTO, null, HttpStatus.NOT_ACCEPTABLE);
+    }
+
+    @ExceptionHandler(value = QuantityNullException.class)
+    public ResponseEntity<?> handleQuantityNullExceptions(QuantityNullException ex) {
+        ExceptionResponseDTO exceptionResponseDTO = new ExceptionResponseDTO();
         exceptionResponseDTO.setException("empty");
-        exceptionResponseDTO.setMessage("Field quantity is empty");
+        exceptionResponseDTO.setMessage(ex.getMessage());
         exceptionResponseDTO.setCode(ErrorCodeDTO.QUANTITY_IS_NULL.getCode());
 
         return new ResponseEntity<>(exceptionResponseDTO, null, HttpStatus.NOT_ACCEPTABLE);
