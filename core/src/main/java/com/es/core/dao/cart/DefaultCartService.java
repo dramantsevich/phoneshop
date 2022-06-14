@@ -24,7 +24,7 @@ public class DefaultCartService {
         }
 
         List<CartItem> cartList = cart.getItems();
-        Stock phone = stockDao.getPhoneById(phoneId);
+        Stock phone = stockDao.getPhoneById(phoneId).orElseThrow(NullPointerException::new);
         CartItem cartItem = new CartItem(phone, quantity);
 
         return cartList.stream()

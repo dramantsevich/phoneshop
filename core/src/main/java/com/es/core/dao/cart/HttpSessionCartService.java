@@ -3,6 +3,7 @@ package com.es.core.dao.cart;
 import com.es.core.dao.stock.StockDao;
 import com.es.core.exception.OutOfStockException;
 import com.es.core.exception.PhonePriceException;
+import com.es.core.exception.QuantityNullException;
 import com.es.core.model.cart.Cart;
 import com.es.core.model.cart.CartItem;
 import com.es.core.model.phone.Stock;
@@ -10,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 
@@ -37,13 +39,13 @@ public class HttpSessionCartService implements CartService {
     @Override
     public void addPhone(Cart cart, Long phoneId, Long quantity) throws OutOfStockException {
         if (quantity == null) {
-            throw new NullPointerException();
+            throw new QuantityNullException();
         }
 
         Optional<CartItem> cartItemOptional = defaultCartService.findCartItemForUpdate(cart, phoneId, quantity.intValue());
         int productsAmount = cartItemOptional.map(CartItem::getQuantity).orElse(0);
 
-        Stock phone = stockDao.getPhoneById(phoneId);
+        Stock phone = stockDao.getPhoneById(phoneId).orElseThrow(NullPointerException::new);
         if (phone.getPhone().getPrice() == null) {
             throw new PhonePriceException();
         }
@@ -68,10 +70,10 @@ public class HttpSessionCartService implements CartService {
     @Override
     public void update(Cart cart, Long phoneId, Long quantity) {
         if (quantity == null) {
-            throw new NullPointerException();
+            throw new QuantityNullException();
         }
 
-        Stock phone = stockDao.getPhoneById(phoneId);
+        Stock phone = stockDao.getPhoneById(phoneId).orElseThrow(NullPointerException::new);
 
         if (phone.getPhone().getPrice() == null) {
             throw new PhonePriceException();
@@ -101,5 +103,14 @@ public class HttpSessionCartService implements CartService {
 
         defaultCartService.recalculateCartQuantity(cart);
         defaultCartService.recalculateCartTotalCost(cart);
+    }
+
+    @Override
+    public void clearCart(Cart cart) {
+        List<CartItem> cartList = cart.getItems();
+
+        cartList.clear();
+        cart.setTotalCost(new BigDecimal(0));
+        cart.setTotalQuantity(0);
     }
 }
