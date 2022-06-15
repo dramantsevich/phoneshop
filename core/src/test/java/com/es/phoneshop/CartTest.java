@@ -23,7 +23,7 @@ public class CartTest {
 
     @SneakyThrows
     @Test
-    public void AddPhoneWorksCorrectly() {
+    public void testAddPhoneWorksCorrectly() {
         Cart cart = mock(Cart.class);
         doReturn(BigDecimal.valueOf(198.0))
                 .when(cart)
@@ -32,9 +32,7 @@ public class CartTest {
                 .when(cart)
                 .getTotalQuantity();
 
-        List<CartItem> cartItemList = new ArrayList<>();
-        CartItem cartItem = createCartItem();
-        cartItemList.add(cartItem);
+        List<CartItem> cartItemList = createCartItem();
 
         doReturn(cartItemList)
                 .when(cart)
@@ -51,7 +49,7 @@ public class CartTest {
 
     @SneakyThrows
     @Test
-    public void CartTotalCalculationWorksCorrectly() {
+    public void testCartTotalCostCalculationWorksCorrectly() {
         Cart cart = mock(Cart.class);
 
         doReturn(BigDecimal.valueOf(198.0))
@@ -68,24 +66,7 @@ public class CartTest {
 
     @SneakyThrows
     @Test
-    public void CartTotalCostCalculationWorksCorrectly() {
-        Cart cart = mock(Cart.class);
-
-        doReturn(BigDecimal.valueOf(198.0))
-                .when(cart).getTotalCost();
-        doReturn(2)
-                .when(cart).getTotalQuantity();
-
-        doNothing()
-                .when(mockDefaultCartService)
-                .recalculateCartTotalCost(cart);
-
-        Assert.assertEquals(cart.getTotalCost(), BigDecimal.valueOf(198.0));
-    }
-
-    @SneakyThrows
-    @Test
-    public void CartTotalQuantityCalculationWorksCorrectly() {
+    public void testCartTotalQuantityCalculationWorksCorrectly() {
         Cart cart = mock(Cart.class);
 
         doReturn(BigDecimal.valueOf(198.0))
@@ -100,7 +81,8 @@ public class CartTest {
         Assert.assertEquals(cart.getTotalQuantity(), 2);
     }
 
-    private CartItem createCartItem() {
+    private List<CartItem> createCartItem() {
+        List<CartItem> cartItemList = new ArrayList<>();
         Phone phone = createPhone();
 
         Stock stock = new Stock();
@@ -108,7 +90,9 @@ public class CartTest {
         stock.setStock(11);
         stock.setReserved(0);
 
-        return new CartItem(stock, 2);
+        cartItemList.add(new CartItem(stock, 2));
+
+        return cartItemList;
     }
 
     private Phone createPhone() {
