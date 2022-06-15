@@ -32,14 +32,14 @@ public class DefaultCartService {
                 .findAny();
     }
 
-    protected void recalculateCartQuantity(Cart cart) {
+    public void recalculateCartQuantity(Cart cart) {
         int totalQuantity = cart.getItems().stream()
                 .map(CartItem::getQuantity).mapToInt(Integer::intValue).sum();
 
         cart.setTotalQuantity(totalQuantity);
     }
 
-    protected void recalculateCartTotalCost(Cart cart) {
+    public void recalculateCartTotalCost(Cart cart) {
         BigDecimal totalCost = cart.getItems().stream()
                 .map(item -> BigDecimal.valueOf(item.getQuantity()).multiply(item.getStock().getPhone().getPrice()))
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
