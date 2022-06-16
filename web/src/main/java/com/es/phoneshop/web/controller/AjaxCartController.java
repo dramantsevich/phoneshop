@@ -31,17 +31,4 @@ public class AjaxCartController {
 
         return new ResponseEntity<>(cart, HttpStatus.OK);
     }
-
-    @RequestMapping(value = "/update", method = RequestMethod.PUT,
-            produces = "application/json", consumes = "application/json")
-    public ResponseEntity<?> updateCart(@RequestBody CartItemDTO cartItemDTO,
-                                        Model model,
-                                        HttpServletRequest request) {
-        Cart cart = cartService.getCart(request);
-
-        cartService.update(cart, cartItemDTO.getId(), cartItemDTO.getQuantity().longValue());
-        model.addAttribute("cart", cart);
-
-        return new ResponseEntity<>(cart, HttpStatus.OK);
-    }
 }
