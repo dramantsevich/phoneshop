@@ -104,7 +104,7 @@
     </c:forEach>
     <c:choose>
         <c:when test="${p < t}">
-            <a href="/productList/ + ${p + 1}?sort=${sort}$order=&${order}"><i
+            <a href="/productList/ + ${p + 1}?sort=${sort}&order=&${order}"><i
                     class="material-icons">chevron_right</i></a>
         </c:when>
         <c:otherwise>
