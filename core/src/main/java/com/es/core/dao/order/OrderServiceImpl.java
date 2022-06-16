@@ -1,11 +1,14 @@
 package com.es.core.dao.order;
 
+import com.es.core.dao.stock.StockDao;
 import com.es.core.exception.OrderNotFoundException;
 import com.es.core.exception.OrderOutOfStockException;
 import com.es.core.model.cart.Cart;
 import com.es.core.model.cart.CartItem;
 import com.es.core.model.order.Order;
 import com.es.core.model.order.OrderStatus;
+import com.es.core.model.phone.Stock;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
@@ -29,13 +32,26 @@ public class OrderServiceImpl implements OrderService {
     @Resource
     private JdbcTemplate jdbcTemplate;
 
+    @Autowired
+    private StockDao stockDao;
+
     @Override
     public Order createOrder(Cart cart) {
         Order order = new Order();
-        order.setItems(cart.getItems().stream().map(CartItem::new).collect(Collectors.toList()));
-        order.setSubtotal(cart.getTotalCost());
-        order.setDeliveryPrice(new BigDecimal(deliveryPrice));
-        order.setTotalPrice(order.getSubtotal().add(new BigDecimal(deliveryPrice)));
+        List<CartItem> cartItemList = new ArrayList<>();
+        CartItem newCartItem;
+
+        for(CartItem cartItem : cart.getItems()) {
+            Stock phone = stockDao.getPhoneById(cartItem.getStock().getPhone().getId())
+                    .orElseThrow(NullPointerException::new);
+            newCartItem = new CartItem(phone, cartItem.getQuantity());
+
+            cartItemList.add(newCartItem);
+            order.setItems(cartItemList);
+            order.setSubtotal(cart.getTotalCost());
+            order.setDeliveryPrice(new BigDecimal(deliveryPrice));
+            order.setTotalPrice(order.getSubtotal().add(new BigDecimal(deliveryPrice)));
+        }
 
         return order;
     }

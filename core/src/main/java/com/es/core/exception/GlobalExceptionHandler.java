@@ -121,4 +121,14 @@ public class GlobalExceptionHandler {
 
         return new ResponseEntity<>(exceptionResponseDTO, null, HttpStatus.NOT_FOUND);
     }
+
+    @ExceptionHandler(value = OrderOutOfStockException.class)
+    public String handleOrderOutOfStockExceptions(OrderOutOfStockException ex) {
+        ExceptionResponseDTO exceptionResponseDTO = new ExceptionResponseDTO();
+        exceptionResponseDTO.setException("Out of stock");
+        exceptionResponseDTO.setMessage("No such phones available ");
+        exceptionResponseDTO.setCode(ErrorCodeDTO.NOT_ACCEPTABLE.getCode());
+
+        return "error";
+    }
 }
