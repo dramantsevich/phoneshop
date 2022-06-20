@@ -13,8 +13,8 @@
                 ${error}
             </div>
           </c:if>
-            <form method="POST" action="/login">
-                User Name : <input type="text" name="userName" value="admin"/><br><br>
+            <form method="POST" action="${pageContext.request.contextPath}/login">
+                User Name : <input type="text" name="username" value="admin"/><br><br>
                 Password : <input type="password" name="password" value="password"/><br><br>
                 <input type="submit" name="submit"/>
                 <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}">

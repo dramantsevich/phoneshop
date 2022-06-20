@@ -3,13 +3,6 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 
 <tags:master pageTitle="Order ${order.id}">
-    <c:if test="${pageContext.request.userPrincipal.name != null}">
-        <form method="post" action="/logout">
-            <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}">
-        </form>
-    </c:if>
-    <p>Welcome ${pageContext.request.userPrincipal.name} | <a onclick="document.forms['logoutForm'].submit()">Logout</a></p>
-    <p>message</p>
     <div id="content">
         <div class=”row”>
             <div class="col-md-6">

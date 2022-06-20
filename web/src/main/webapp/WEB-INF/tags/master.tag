@@ -1,5 +1,6 @@
 <%@ tag trimDirectiveWhitespaces="true" %>
 <%@ attribute name="pageTitle" required="true" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 
 <html>
 <head>
@@ -68,7 +69,18 @@
         <h4><span id="cartTotalQuantity">quantity: ${cart.totalQuantity}</span>, <span id="cartTotalCost">$${cart.totalCost}</span></h4>
     </div>
     <div>
-        <a href="${pageContext.request.contextPath}/login">Login</a>
+        <c:choose>
+            <c:when test="${pageContext.request.userPrincipal.name != null}">
+                <form method="post" action="/logout">
+                    <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}">
+                    <p>Welcome <a href="/admin/orders">${pageContext.request.userPrincipal.name}</a>
+                        | <button type="submit">Logout</button></p>
+                </form>
+            </c:when>
+            <c:otherwise>
+                <a href="${pageContext.request.contextPath}/login">Login</a>
+            </c:otherwise>
+        </c:choose>
     </div>
 </header>
 <main>
