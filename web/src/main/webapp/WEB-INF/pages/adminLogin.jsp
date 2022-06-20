@@ -17,6 +17,7 @@
                 User Name : <input type="text" name="userName" value="admin"/><br><br>
                 Password : <input type="password" name="password" value="password"/><br><br>
                 <input type="submit" name="submit"/>
+                <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}">
             </form>
         </div>
     </div>
