@@ -1,6 +1,6 @@
 package com.es.phoneshop;
 
-import com.es.core.dao.stock.StockDao;
+import com.es.core.dao.StockDao;
 import com.es.core.model.phone.Color;
 import com.es.core.model.phone.Phone;
 import com.es.core.model.phone.Stock;

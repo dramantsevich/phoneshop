@@ -1,6 +1,6 @@
 package com.es.phoneshop;
 
-import com.es.core.dao.order.OrderService;
+import com.es.core.service.OrderService;
 import com.es.core.exception.OrderOutOfStockException;
 import com.es.core.model.cart.Cart;
 import com.es.core.model.cart.CartItem;

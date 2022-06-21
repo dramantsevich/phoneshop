@@ -1,6 +1,5 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<%@ taglib prefix="s" uri="http://www.springframework.org/tags" %>
 <%@ taglib prefix="sf" uri="http://www.springframework.org/tags/form" %>
 <%@ taglib prefix="tags" tagdir="/WEB-INF/tags" %>
 
@@ -62,7 +61,7 @@
                     <td>${ph.phone.displaySizeInches}"</td>
                     <td>$ ${ph.phone.price}</td>
                     <td>
-                        <input id="${ph.phone.id}" type="text" class="quantity" name="quantity"/>
+                        <input id="${ph.phone.id}" class="quantity" name="quantity"/>
                         <input type="hidden" name="hiddenProductId" class="hiddenProductId" value='${ph.phone.id}'/>
                         <div style="color: red" id="feedback${ph.phone.id}"></div>
                     </td>
@@ -75,13 +74,14 @@
             </c:forEach>
         </table>
     </div>
-    <c:set var="p" value="${currentPage}" /> <%-- current page (1-based) --%>
-    <c:set var="l" value="10" /> <%-- amount of page links to be displayed --%>
-    <c:set var="r" value="${l / 2}" /> <%-- minimum link range ahead/behind --%>
-    <c:set var="t" value="${totalPages}" /> <%-- total amount of pages --%>
 
-    <c:set var="begin" value="${((p - r) > 0 ? ((p - r) < (t - l + 1) ? (p - r) : (t - l)) : 0) + 1}" />
-    <c:set var="end" value="${(p + r) < t ? ((p + r) > l ? (p + r) : l) : t}" />
+    <c:set var="p" value="${currentPage}"/> <%-- current page (1-based) --%>
+    <c:set var="l" value="10"/> <%-- amount of page links to be displayed --%>
+    <c:set var="r" value="${l / 2}"/> <%-- minimum link range ahead/behind --%>
+    <c:set var="t" value="${totalPages}"/> <%-- total amount of pages --%>
+
+    <c:set var="begin" value="${((p - r) > 0 ? ((p - r) < (t - l + 1) ? (p - r) : (t - l)) : 0) + 1}"/>
+    <c:set var="end" value="${(p + r) < t ? ((p + r) > l ? (p + r) : l) : t}"/>
 
     <c:choose>
         <c:when test="${p != 1}">

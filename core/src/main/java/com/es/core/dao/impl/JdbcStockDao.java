@@ -1,5 +1,6 @@
-package com.es.core.dao.stock;
+package com.es.core.dao.impl;
 
+import com.es.core.dao.StockDao;
 import com.es.core.mapper.StockMapper;
 import com.es.core.model.phone.Stock;
 import org.springframework.beans.factory.annotation.Autowired;

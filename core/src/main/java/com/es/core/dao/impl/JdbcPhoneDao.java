@@ -1,5 +1,6 @@
-package com.es.core.dao.phone;
+package com.es.core.dao.impl;
 
+import com.es.core.dao.PhoneDao;
 import com.es.core.mapper.PhoneMapper;
 import com.es.core.model.phone.Phone;
 import org.springframework.beans.factory.annotation.Autowired;

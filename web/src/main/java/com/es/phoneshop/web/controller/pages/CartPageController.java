@@ -5,7 +5,7 @@ import com.es.core.exception.OutOfStockException;
 import com.es.core.exception.PhonePriceException;
 import com.es.core.exception.QuantityNullException;
 import com.es.core.model.cart.Cart;
-import com.es.core.dao.cart.CartService;
+import com.es.core.service.CartService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;

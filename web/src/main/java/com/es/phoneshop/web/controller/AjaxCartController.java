@@ -1,7 +1,7 @@
 package com.es.phoneshop.web.controller;
 
 import com.es.core.model.cart.Cart;
-import com.es.core.dao.cart.CartService;
+import com.es.core.service.CartService;
 import com.es.core.exception.OutOfStockException;
 import com.es.core.dto.CartItemDTO;
 import lombok.RequiredArgsConstructor;

@@ -1,8 +1,8 @@
 package com.es.phoneshop.web.controller.pages;
 
-import com.es.core.dao.cart.CartService;
+import com.es.core.service.CartService;
 import com.es.core.model.cart.Cart;
-import com.es.core.dao.order.OrderService;
+import com.es.core.service.OrderService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;

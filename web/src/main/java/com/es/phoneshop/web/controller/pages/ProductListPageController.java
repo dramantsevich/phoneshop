@@ -3,9 +3,9 @@ package com.es.phoneshop.web.controller.pages;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 
-import com.es.core.dao.stock.StockDao;
+import com.es.core.dao.StockDao;
 import com.es.core.model.cart.Cart;
-import com.es.core.dao.cart.CartService;
+import com.es.core.service.CartService;
 import com.es.core.model.phone.Stock;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.domain.Page;

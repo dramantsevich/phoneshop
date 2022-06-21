@@ -1,6 +1,6 @@
 package com.es.phoneshop;
 
-import com.es.core.dao.phone.PhoneDao;
+import com.es.core.dao.PhoneDao;
 import com.es.core.model.phone.*;
 import org.junit.Test;
 import org.junit.runner.RunWith;

@@ -1,10 +1,10 @@
 package com.es.phoneshop.web.controller.pages;
 
-import com.es.core.dao.cart.CartService;
+import com.es.core.service.CartService;
 import com.es.core.model.cart.Cart;
 import com.es.core.model.order.Order;
-import com.es.core.dao.order.DefaultOrderService;
-import com.es.core.dao.order.OrderService;
+import com.es.core.service.impl.order.DefaultOrderService;
+import com.es.core.service.OrderService;
 import com.es.core.exception.OrderNotFoundException;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;

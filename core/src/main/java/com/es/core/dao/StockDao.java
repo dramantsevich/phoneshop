@@ -1,4 +1,4 @@
-package com.es.core.dao.stock;
+package com.es.core.dao;
 
 import com.es.core.model.phone.Stock;
 import org.springframework.data.domain.Page;

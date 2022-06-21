@@ -1,6 +1,7 @@
-package com.es.core.dao.order;
+package com.es.core.service.impl.order;
 
-import com.es.core.dao.stock.StockDao;
+import com.es.core.service.OrderService;
+import com.es.core.dao.StockDao;
 import com.es.core.exception.OrderNotFoundException;
 import com.es.core.exception.OrderOutOfStockException;
 import com.es.core.model.cart.Cart;
@@ -18,7 +19,6 @@ import javax.annotation.Resource;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Service
 public class OrderServiceImpl implements OrderService {
@@ -70,7 +70,7 @@ public class OrderServiceImpl implements OrderService {
         order.setStatus(OrderStatus.NEW);
     }
 
-    public void save(Order item) {
+    private void save(Order item) {
         Long longId = item.getId();
 
         if (longId != null) {
@@ -84,7 +84,7 @@ public class OrderServiceImpl implements OrderService {
         orderList.add(item);
     }
 
-    public Order getItem(Long id) {
+    private Order getItem(Long id) {
         return orderList.stream()
                 .filter(o -> id.equals(o.getId()))
                 .findAny()

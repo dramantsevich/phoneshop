@@ -1,6 +1,7 @@
-package com.es.core.dao.cart;
+package com.es.core.service.impl.cart;
 
-import com.es.core.dao.stock.StockDao;
+import com.es.core.service.CartService;
+import com.es.core.dao.StockDao;
 import com.es.core.exception.OutOfStockException;
 import com.es.core.exception.PhonePriceException;
 import com.es.core.exception.QuantityNullException;
@@ -17,14 +18,14 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
-public class HttpSessionCartService implements CartService {
+public class HttpSessionCartServiceImpl implements CartService {
     @Autowired
     private StockDao stockDao;
 
     @Autowired
     private DefaultCartService defaultCartService;
 
-    private static final String CART_SESSION_ATTRIBUTE = HttpSessionCartService.class.getName() + ".cart";
+    private static final String CART_SESSION_ATTRIBUTE = HttpSessionCartServiceImpl.class.getName() + ".cart";
 
     @Override
     public Cart getCart(HttpServletRequest request) {

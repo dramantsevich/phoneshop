@@ -1,7 +1,7 @@
 package com.es.phoneshop;
 
-import com.es.core.dao.cart.CartService;
-import com.es.core.dao.cart.DefaultCartService;
+import com.es.core.service.CartService;
+import com.es.core.service.impl.cart.DefaultCartService;
 import com.es.core.model.cart.Cart;
 import com.es.core.model.cart.CartItem;
 import com.es.core.model.phone.Phone;

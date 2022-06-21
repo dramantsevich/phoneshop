@@ -1,4 +1,4 @@
-package com.es.core.dao.cart;
+package com.es.core.service;
 
 import com.es.core.exception.OutOfStockException;
 import com.es.core.model.cart.Cart;

@@ -4,13 +4,12 @@
 <%@ taglib prefix="tags" tagdir="/WEB-INF/tags" %>
 
 <tags:master pageTitle="Product List">
-    <p>
-        <sf:form method="get" action="/search/1">
+    <sf:form method="get" action="/search/1">
         <label>
             <input type="text" name="keyword" placeholder="Search" size="50"/>
         </label>
         <button type="submit" class="btn btn-info">Search</button>
-        </sf:form>
+    </sf:form>
     <div id="content">
         <table border="1px">
             <thead>

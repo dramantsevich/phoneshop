@@ -1,6 +1,6 @@
-package com.es.core.dao.cart;
+package com.es.core.service.impl.cart;
 
-import com.es.core.dao.stock.StockDao;
+import com.es.core.dao.StockDao;
 import com.es.core.exception.NegativeQuantityException;
 import com.es.core.exception.OutOfStockException;
 import com.es.core.model.cart.Cart;

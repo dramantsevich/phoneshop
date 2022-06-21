@@ -1,6 +1,6 @@
 package com.es.phoneshop.web.controller.pages.admin;
 
-import com.es.core.dao.order.OrderService;
+import com.es.core.service.OrderService;
 import com.es.core.model.order.Order;
 import com.es.core.model.order.OrderStatus;
 import org.springframework.beans.factory.annotation.Autowired;
