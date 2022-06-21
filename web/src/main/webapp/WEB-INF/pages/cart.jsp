@@ -33,7 +33,7 @@
                                     <td>$${item.stock.phone.price}</td>
                                     <td>
                                         <c:set var="error" value="${errors[item.stock.phone.id]}"/>
-                                        <input class="quantity" name="quantity" type="number"
+                                        <input class="quantity" name="quantity"
                                                value="${not empty error ? paramValues['quantity'][status.index] : item.quantity}"/>
                                         <c:if test="${not empty error}">
                                             <div style="color: red" class="error">

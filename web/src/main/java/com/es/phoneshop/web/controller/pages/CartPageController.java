@@ -37,7 +37,7 @@ public class CartPageController {
     }
 
     @RequestMapping(value = "/update", method = RequestMethod.POST)
-    public String updateCart(@RequestParam Long[] quantity,
+    public String updateCart(@RequestParam String[] quantity,
                              @RequestParam Long[] productId,
                              Model model,
                              HttpServletRequest request) {
@@ -47,7 +47,8 @@ public class CartPageController {
         for (int i = 0; i < productId.length; i++) {
             try {
                 cartService.update(cart, productId[i], quantity[i]);
-            } catch (QuantityNullException | PhonePriceException | OutOfStockException | NegativeQuantityException ex) {
+            } catch (QuantityNullException | PhonePriceException | OutOfStockException | NegativeQuantityException
+                     | NumberFormatException | ArrayIndexOutOfBoundsException ex) {
                 handleUpdateErrors(errors, productId[i], ex);
             }
         }
@@ -70,6 +71,10 @@ public class CartPageController {
             errors.put(productId, "No such quantity available");
         } else if (e.getClass().equals(NegativeQuantityException.class)) {
             errors.put(productId, "Should be grater then 0");
+        } else if (e.getClass().equals(NumberFormatException.class)) {
+            errors.put(productId, "Enter number data");
+        }else if (e.getClass().equals(ArrayIndexOutOfBoundsException.class)) {
+            errors.put(productId, "Enter data");
         }
     }
 }

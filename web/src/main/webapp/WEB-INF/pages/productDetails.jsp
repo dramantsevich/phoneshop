@@ -38,7 +38,7 @@
                             <h2 class="product-price">$${phone.price}</h2>
                         </div>
                     </div>
-                    <input id="${phone.id}" type="number" class="quantity" name="quantity"/>
+                    <input id="${phone.id}" class="quantity" name="quantity"/>
                     <input type="hidden" name="hiddenProductId" class="hiddenProductId" value='${phone.id}'/>
                     <div style="color: red" id="feedback${phone.id}"></div>
                     <input id="btn-submit" type="submit" class="btn btn-primary addToCart" name="button"

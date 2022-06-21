@@ -11,7 +11,7 @@ public interface CartService {
 
     void addPhone(Cart cart, Long phoneId, Long quantity) throws OutOfStockException;
 
-    void update(Cart cart, Long phoneId, Long quantity);
+    void update(Cart cart, Long phoneId, String quantity);
 
     void remove(Cart cart, Long phoneId);
 

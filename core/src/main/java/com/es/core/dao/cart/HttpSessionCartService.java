@@ -7,6 +7,7 @@ import com.es.core.exception.QuantityNullException;
 import com.es.core.model.cart.Cart;
 import com.es.core.model.cart.CartItem;
 import com.es.core.model.phone.Stock;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -68,8 +69,14 @@ public class HttpSessionCartService implements CartService {
     }
 
     @Override
-    public void update(Cart cart, Long phoneId, Long quantity) {
-        if (quantity == null) {
+    public void update(Cart cart, Long phoneId, String quantity) {
+        if(StringUtils.isEmpty(quantity)) {
+            throw new NumberFormatException();
+        }
+
+        Long quantityLong = Long.valueOf(quantity);
+
+        if (quantityLong == null) {
             throw new QuantityNullException();
         }
 
@@ -79,16 +86,16 @@ public class HttpSessionCartService implements CartService {
             throw new PhonePriceException();
         }
 
-        if ((phone.getStock() - phone.getReserved()) < quantity) {
+        if ((phone.getStock() - phone.getReserved()) < quantityLong) {
             throw new OutOfStockException();
         }
 
-        Optional<CartItem> cartItemOptional = defaultCartService.findCartItemForUpdate(cart, phoneId, quantity.intValue());
+        Optional<CartItem> cartItemOptional = defaultCartService.findCartItemForUpdate(cart, phoneId, quantityLong.intValue());
         List<CartItem> cartList = cart.getItems();
-        CartItem cartItem = new CartItem(phone, quantity.intValue());
+        CartItem cartItem = new CartItem(phone, quantityLong.intValue());
 
         if (cartItemOptional.isPresent()) {
-            cartItemOptional.get().setQuantity(quantity.intValue());
+            cartItemOptional.get().setQuantity(quantityLong.intValue());
         } else {
             cartList.add(cartItem);
         }

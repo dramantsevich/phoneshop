@@ -21,7 +21,7 @@ public class CartItemValidator implements Validator {
 
         if (cartItemDTO.getQuantity() == null) {
             errors.rejectValue("quantity", "field must not be empty");
-        } else if (cartItemDTO.getQuantity() <= 0) {
+        } else if (Integer.parseInt(cartItemDTO.getQuantity()) <= 0) {
             errors.rejectValue("quantity", "quantity should be greater than 0");
         }
     }

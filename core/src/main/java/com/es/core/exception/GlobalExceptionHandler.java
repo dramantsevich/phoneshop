@@ -131,4 +131,14 @@ public class GlobalExceptionHandler {
 
         return "error";
     }
+
+    @ExceptionHandler(value = NumberFormatException.class)
+    public ResponseEntity<?> handleNumberFormatExceptions(NumberFormatException ex) {
+        ExceptionResponseDTO exceptionResponseDTO = new ExceptionResponseDTO();
+        exceptionResponseDTO.setException("number format exception");
+        exceptionResponseDTO.setMessage("enter number data");
+        exceptionResponseDTO.setCode(ErrorCodeDTO.PARSE_ERROR.getCode());
+
+        return new ResponseEntity<>(exceptionResponseDTO, null, HttpStatus.NOT_FOUND);
+    }
 }

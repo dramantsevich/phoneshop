@@ -26,7 +26,8 @@ public class AjaxCartController {
                                       HttpServletRequest request) throws OutOfStockException {
         Cart cart = cartService.getCart(request);
 
-        cartService.addPhone(cart, cartItemDTO.getId(), cartItemDTO.getQuantity().longValue());
+        cartService.addPhone(cart, cartItemDTO.getId(), Long.valueOf(cartItemDTO.getQuantity()));
+
         model.addAttribute("cart", cart);
 
         return new ResponseEntity<>(cart, HttpStatus.OK);

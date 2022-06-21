@@ -62,7 +62,7 @@
                     <td>${ph.phone.displaySizeInches}"</td>
                     <td>$ ${ph.phone.price}</td>
                     <td>
-                        <input id="${ph.phone.id}" type="number" class="quantity" name="quantity"/>
+                        <input id="${ph.phone.id}" class="quantity" name="quantity"/>
                         <input type="hidden" name="hiddenProductId" class="hiddenProductId" value='${ph.phone.id}'/>
                         <div style="color: red" id="feedback${ph.phone.id}"></div>
                     </td>
