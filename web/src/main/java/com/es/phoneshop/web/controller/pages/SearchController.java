@@ -4,6 +4,7 @@ import com.es.core.dao.StockDao;
 import com.es.core.model.cart.Cart;
 import com.es.core.service.CartService;
 import com.es.core.model.phone.Stock;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -42,10 +43,10 @@ public class SearchController {
         model.addAttribute("order", order);
         model.addAttribute("cart", cart);
 
-        if ((sort != null && !sort.equals("")) && (order != null && !order.equals(""))) {
-            stockPage = stockDao.findSortedPhonesByKeyword(firstPage, sort, order, keyword);
-        } else {
+        if (StringUtils.isEmpty(sort) && StringUtils.isEmpty(order)) {
             stockPage = stockDao.findByKeyword(firstPage, keyword);
+        } else {
+            stockPage = stockDao.findSortedPhonesByKeyword(firstPage, sort, order, keyword);
         }
 
         setAttributesToModel(model, pageNo, stockPage, keyword);
