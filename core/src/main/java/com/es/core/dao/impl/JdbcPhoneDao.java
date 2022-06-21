@@ -4,7 +4,9 @@ import com.es.core.dao.PhoneDao;
 import com.es.core.mapper.PhoneMapper;
 import com.es.core.model.phone.Phone;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
+import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
@@ -14,7 +16,7 @@ import java.util.Optional;
 @Component
 public class JdbcPhoneDao implements PhoneDao {
     @Resource
-    private JdbcTemplate jdbcTemplate;
+    private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 
     @Autowired
     private PhoneMapper phoneMapper;
@@ -29,7 +31,7 @@ public class JdbcPhoneDao implements PhoneDao {
 
     @Override
     public List<Phone> findWithLimit(int offset, int limit) {
-        return jdbcTemplate.query("select sum(s.stock) as stock, sum(s.reserved) as reserved, " +
+        String sql = "select sum(s.stock) as stock, sum(s.reserved) as reserved, " +
                 "group_concat(c.id) as colorId, group_concat(c.code) as colorCode, p.* \n" +
                 "from phones p\n" +
                 "inner join phone2color p2c on p.Id = p2c.phoneId\n" +
@@ -38,6 +40,11 @@ public class JdbcPhoneDao implements PhoneDao {
                 "where s.stock > 0\n" +
                 "group by p.id\n" +
                 "order by p.id asc \n" +
-                "offset " + offset + " limit " + limit, phoneMapper);
+                "LIMIT :limit OFFSET :offset";
+        SqlParameterSource parameter = new MapSqlParameterSource()
+                .addValue("limit", limit)
+                .addValue("offset", offset);
+
+        return namedParameterJdbcTemplate.query(sql, parameter, phoneMapper);
     }
 }

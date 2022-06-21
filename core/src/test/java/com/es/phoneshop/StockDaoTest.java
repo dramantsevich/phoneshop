@@ -16,7 +16,6 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import java.math.BigDecimal;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -43,16 +42,6 @@ public class StockDaoTest {
         assertThat(stockPage.stream().anyMatch(p -> p.getPhone().getId()
                 .equals(phoneWithStock.getPhone().getId()))).isTrue();
         assertThat(stockPage.stream().anyMatch(p -> p.getStock() > 0)).isTrue();
-    }
-
-    @Test
-    public void testFindAllWithStock() {
-        List<Stock> stockPhones = stockDao.findAllWithStock("");
-
-        int phoneWithStock = stockPhones.get(35).getStock();
-
-        assertThat(stockPhones.size()).isEqualTo(3030);
-        assertThat(phoneWithStock).isGreaterThan(0);
     }
 
     @Test
