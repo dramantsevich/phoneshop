@@ -37,7 +37,6 @@ public class OrderPageController {
         model.addAttribute("order", order);
     }
 
-    @Transactional
     @RequestMapping(method = RequestMethod.POST)
     public String placeOrder(HttpServletRequest request, Model model) throws OrderNotFoundException {
         Cart cart = cartService.getCart(request);
