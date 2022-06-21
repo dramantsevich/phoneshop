@@ -1,5 +1,6 @@
 package com.es.phoneshop;
 
+import com.es.core.exception.PhoneNotFoundException;
 import com.es.core.service.OrderService;
 import com.es.core.exception.OrderOutOfStockException;
 import com.es.core.model.cart.Cart;
@@ -156,7 +157,7 @@ public class OrderServiceTest {
         try {
             cart.setTotalCost(cartItemList.get(0).getStock().getPhone()
                     .getPrice().multiply(BigDecimal.valueOf(cart.getTotalQuantity())));
-        } catch (NullPointerException ex) {
+        } catch (NullPointerException | PhoneNotFoundException ex) {
             cart.setTotalCost(BigDecimal.ZERO);
         }
 

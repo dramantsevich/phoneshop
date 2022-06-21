@@ -1,5 +1,6 @@
 package com.es.core.service.impl.order;
 
+import com.es.core.exception.PhoneNotFoundException;
 import com.es.core.service.OrderService;
 import com.es.core.dao.StockDao;
 import com.es.core.exception.OrderNotFoundException;
@@ -43,7 +44,7 @@ public class OrderServiceImpl implements OrderService {
 
         for(CartItem cartItem : cart.getItems()) {
             Stock phone = stockDao.getPhoneById(cartItem.getStock().getPhone().getId())
-                    .orElseThrow(NullPointerException::new);
+                    .orElseThrow(PhoneNotFoundException::new);
             newCartItem = new CartItem(phone, cartItem.getQuantity());
 
             cartItemList.add(newCartItem);

@@ -1,6 +1,7 @@
 package com.es.phoneshop.web.controller.pages;
 
 import com.es.core.dao.StockDao;
+import com.es.core.exception.PhoneNotFoundException;
 import com.es.core.model.cart.Cart;
 import com.es.core.service.CartService;
 import com.es.core.model.phone.Stock;
@@ -26,7 +27,7 @@ public class ProductDetailsPageController {
     @RequestMapping(value = "/{phoneId}", method = RequestMethod.GET)
     public String productDetails(@PathVariable Long phoneId, Model model, HttpServletRequest request) {
         Cart cart = cartService.getCart(request);
-        Stock phone = stockDao.getPhoneById(phoneId).orElseThrow(NullPointerException::new);
+        Stock phone = stockDao.getPhoneById(phoneId).orElseThrow(PhoneNotFoundException::new);
 
         model.addAttribute("cart", cart);
         model.addAttribute("stock", phone);

@@ -1,5 +1,6 @@
 package com.es.core.service.impl.cart;
 
+import com.es.core.exception.PhoneNotFoundException;
 import com.es.core.service.CartService;
 import com.es.core.dao.StockDao;
 import com.es.core.exception.OutOfStockException;
@@ -47,7 +48,7 @@ public class HttpSessionCartServiceImpl implements CartService {
         Optional<CartItem> cartItemOptional = defaultCartService.findCartItemForUpdate(cart, phoneId, quantity.intValue());
         int productsAmount = cartItemOptional.map(CartItem::getQuantity).orElse(0);
 
-        Stock phone = stockDao.getPhoneById(phoneId).orElseThrow(NullPointerException::new);
+        Stock phone = stockDao.getPhoneById(phoneId).orElseThrow(PhoneNotFoundException::new);
         if (phone.getPhone().getPrice() == null) {
             throw new PhonePriceException();
         }
@@ -81,7 +82,7 @@ public class HttpSessionCartServiceImpl implements CartService {
             throw new QuantityNullException();
         }
 
-        Stock phone = stockDao.getPhoneById(phoneId).orElseThrow(NullPointerException::new);
+        Stock phone = stockDao.getPhoneById(phoneId).orElseThrow(PhoneNotFoundException::new);
 
         if (phone.getPhone().getPrice() == null) {
             throw new PhonePriceException();

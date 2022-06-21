@@ -1,6 +1,7 @@
 package com.es.phoneshop;
 
 import com.es.core.dao.StockDao;
+import com.es.core.exception.PhoneNotFoundException;
 import com.es.core.model.phone.Color;
 import com.es.core.model.phone.Phone;
 import com.es.core.model.phone.Stock;
@@ -28,7 +29,7 @@ public class StockDaoTest {
 
     @Test
     public void testGetPhoneByIdWithStock() {
-        Stock phone = stockDao.getPhoneById(1011L).orElseThrow(NullPointerException::new);
+        Stock phone = stockDao.getPhoneById(1011L).orElseThrow(PhoneNotFoundException::new);
 
         assertThat(phone.getStock()).isGreaterThan(0);
         assertThat(phone.getPhone().getId()).isEqualTo(1011L);

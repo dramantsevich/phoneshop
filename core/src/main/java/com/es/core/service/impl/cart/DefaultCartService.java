@@ -3,6 +3,7 @@ package com.es.core.service.impl.cart;
 import com.es.core.dao.StockDao;
 import com.es.core.exception.NegativeQuantityException;
 import com.es.core.exception.OutOfStockException;
+import com.es.core.exception.PhoneNotFoundException;
 import com.es.core.model.cart.Cart;
 import com.es.core.model.cart.CartItem;
 import com.es.core.model.phone.Stock;
@@ -24,7 +25,7 @@ public class DefaultCartService {
         }
 
         List<CartItem> cartList = cart.getItems();
-        Stock phone = stockDao.getPhoneById(phoneId).orElseThrow(NullPointerException::new);
+        Stock phone = stockDao.getPhoneById(phoneId).orElseThrow(PhoneNotFoundException::new);
         CartItem cartItem = new CartItem(phone, quantity);
 
         return cartList.stream()

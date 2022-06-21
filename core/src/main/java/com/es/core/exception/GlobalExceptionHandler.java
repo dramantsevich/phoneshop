@@ -141,4 +141,14 @@ public class GlobalExceptionHandler {
 
         return new ResponseEntity<>(exceptionResponseDTO, null, HttpStatus.NOT_FOUND);
     }
+
+    @ExceptionHandler(value = PhoneNotFoundException.class)
+    public ResponseEntity<?> handlePhoneNotFoundExceptions(PhoneNotFoundException ex) {
+        ExceptionResponseDTO exceptionResponseDTO = new ExceptionResponseDTO();
+        exceptionResponseDTO.setException("Phone exception");
+        exceptionResponseDTO.setMessage("Phone not found");
+        exceptionResponseDTO.setCode(ErrorCodeDTO.ENTITY_NOT_FOUND.getCode());
+
+        return new ResponseEntity<>(exceptionResponseDTO, null, HttpStatus.NOT_FOUND);
+    }
 }
