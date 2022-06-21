@@ -7,6 +7,7 @@ import com.es.core.dao.stock.StockDao;
 import com.es.core.model.cart.Cart;
 import com.es.core.dao.cart.CartService;
 import com.es.core.model.phone.Stock;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -42,10 +43,10 @@ public class ProductListPageController {
         model.addAttribute("sort", sort);
         model.addAttribute("order", order);
 
-        if ((sort != null && !sort.equals("")) && (order != null && !order.equals(""))) {
-            stockPage = stockDao.findSortedPhones(firstPage, sort, order);
-        } else {
+        if (StringUtils.isEmpty(sort) && StringUtils.isEmpty(order)) {
             stockPage = stockDao.findAll(firstPage);
+        } else {
+            stockPage = stockDao.findSortedPhones(firstPage, sort, order);
         }
 
         setAttributesToModel(model, pageNo, stockPage);
