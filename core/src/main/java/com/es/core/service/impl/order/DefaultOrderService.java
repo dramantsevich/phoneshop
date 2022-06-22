@@ -1,7 +1,6 @@
 package com.es.core.service.impl.order;
 
 import com.es.core.dao.OrderDao;
-import com.es.core.exception.OrderNotFoundException;
 import com.es.core.exception.OrderOutOfStockException;
 import com.es.core.model.cart.CartItem;
 import com.es.core.model.order.Order;
@@ -10,9 +9,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicLong;
 import java.util.function.Consumer;
 
 @Service
@@ -20,36 +20,41 @@ public class DefaultOrderService {
     @Autowired
     private OrderDao orderDao;
 
-    private long orderId;
+    private final AtomicLong orderId = new AtomicLong(0);
 
-    final List<Order> orderList = new ArrayList<>();
+    private final Map<AtomicLong, Order> orderMap = new HashMap();
 
-    void save(Order item) {
-        Long longId = item.getId();
-
-        if (longId != null) {
-            Long id = item.getId();
-
-            orderList.remove(getItem(id));
-        } else {
-            item.setId(++orderId);
-        }
-
-        orderList.add(item);
+    public Map<AtomicLong, Order> getOrderMap() {
+        return orderMap;
     }
 
-    private Order getItem(Long id) {
-        return orderList.stream()
-                .filter(o -> id.equals(o.getId()))
-                .findAny()
-                .orElseThrow(OrderNotFoundException::new);
+    public void save(Order item) {
+        long id = orderId.incrementAndGet();
+
+        item.setId(id);
+
+        orderMap.put(new AtomicLong(id), item);
+    }
+
+    public Order getItem(Long id) {
+        Order order = null;
+
+        for(Map.Entry<AtomicLong, Order> e : orderMap.entrySet()) {
+            order = e.getValue();
+
+            if(order.getId().equals(id)) {
+                return order;
+            }
+        }
+
+        return order;
     }
 
     @Transactional
     public void updateStock(Order order) {
-        List<CartItem> orderList = order.getItems();
+        List<CartItem> cartItemList = order.getItems();
 
-        for (CartItem item : orderList) {
+        for (CartItem item : cartItemList) {
             long id = item.getStock().getPhone().getId();
             int quantity = item.getQuantity();
             int stock = item.getStock().getStock();

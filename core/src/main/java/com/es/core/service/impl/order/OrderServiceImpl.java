@@ -18,6 +18,7 @@ import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicLong;
 
 @Service
 public class OrderServiceImpl implements OrderService {
@@ -70,23 +71,27 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public Order getItemBySecureId(String id) {
-        return defaultOrderService.orderList.stream()
-                .filter(o -> id.equals(o.getSecureId()))
-                .findAny()
-                .orElseThrow(OrderNotFoundException::new);
+        Map<AtomicLong, Order> orderMap = defaultOrderService.getOrderMap();
+        Order order = null;
+
+        for(Map.Entry<AtomicLong, Order> e : orderMap.entrySet()) {
+            order = e.getValue();
+
+            if(order.getSecureId().equals(id)) {
+                return order;
+            }
+        }
+        return order;
     }
 
     @Override
-    public List<Order> getOrders() {
-        return Optional.of(defaultOrderService.orderList).get();
+    public Map<AtomicLong, Order> getOrders() {
+        return defaultOrderService.getOrderMap();
     }
 
     @Override
     public Order getOrderById(Long id) {
-        return defaultOrderService.orderList.stream()
-                .filter(o -> id.equals(o.getId()))
-                .findAny()
-                .orElseThrow(OrderNotFoundException::new);
+        return defaultOrderService.getItem(id);
     }
 
     @Override
@@ -100,10 +105,10 @@ public class OrderServiceImpl implements OrderService {
 
             for (CartItem item : orderList) {
                 long id = item.getStock().getPhone().getId();
-                int quantity = item.getQuantity();
+                int quantity = item.getQuantity();//доставать значения через бд
                 int stock = item.getStock().getStock();
-                int reserved = item.getStock().getReserved();
-                int updateReserved = reserved - quantity;
+                int reserved = item.getStock().getReserved();//достать из бд
+                int updateReserved = reserved - quantity;//обновлять reserved до нуля
 
                 if ((stock - reserved) < quantity) {
                     throw new OrderOutOfStockException();

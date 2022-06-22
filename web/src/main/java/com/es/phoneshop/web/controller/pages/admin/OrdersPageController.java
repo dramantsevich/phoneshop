@@ -6,11 +6,12 @@ import com.es.core.model.order.OrderStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 
-import java.util.List;
+import java.util.Map;
+import java.util.concurrent.atomic.AtomicLong;
 
 @Controller
 @RequestMapping(value = "/admin/orders")
@@ -18,16 +19,16 @@ public class OrdersPageController {
     @Autowired
     private OrderService orderService;
 
-    @RequestMapping(method = RequestMethod.GET)
+    @GetMapping
     public String getAdminOrdersPage(Model model) {
-        List<Order> orderList = orderService.getOrders();
+        Map<AtomicLong, Order> orderMap = orderService.getOrders();
 
-        model.addAttribute("orders", orderList);
+        model.addAttribute("orders", orderMap);
 
         return "adminOrders";
     }
 
-    @RequestMapping(value = "/{orderId}", method = RequestMethod.GET)
+    @GetMapping(value = "/{orderId}")
     public String getAdminOrderDetailPage(@PathVariable Long orderId, Model model) {
         Order order = orderService.getOrderById(orderId);
         model.addAttribute("order", order);
@@ -35,7 +36,7 @@ public class OrdersPageController {
         return "adminOrderDetail";
     }
 
-    @RequestMapping(value = "/delivered/{orderId}", method = RequestMethod.GET)
+    @GetMapping(value = "/delivered/{orderId}")
     public String setDeliveredStatus(@PathVariable Long orderId, Model model) {
         Order order = orderService.getOrderById(orderId);
         order = orderService.setStatus(order, OrderStatus.DELIVERED);
@@ -45,7 +46,7 @@ public class OrdersPageController {
         return "redirect:/admin/orders/" + orderId;
     }
 
-    @RequestMapping(value = "/rejected/{orderId}", method = RequestMethod.GET)
+    @GetMapping(value = "/rejected/{orderId}")
     public String setRejectedStatus(@PathVariable Long orderId, Model model) {
         Order order = orderService.getOrderById(orderId);
         order = orderService.setStatus(order, OrderStatus.REJECTED);

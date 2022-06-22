@@ -5,7 +5,8 @@ import com.es.core.model.cart.Cart;
 import com.es.core.model.order.Order;
 import com.es.core.model.order.OrderStatus;
 
-import java.util.List;
+import java.util.Map;
+import java.util.concurrent.atomic.AtomicLong;
 
 public interface OrderService {
     Order createOrder(Cart cart);
@@ -14,7 +15,7 @@ public interface OrderService {
 
     Order getItemBySecureId(String id);
 
-    List<Order> getOrders();
+    Map<AtomicLong, Order> getOrders();
 
     Order getOrderById(Long id);
 

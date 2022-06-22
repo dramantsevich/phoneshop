@@ -9,16 +9,16 @@
                 <caption>Orders</caption>
                 <thead>
                 <tr>
-                    <td>Order Number</td>
-                    <td>Customer</td>
-                    <td>Phone</td>
-                    <td>Address</td>
-                    <td>Date</td>
-                    <td>Total Price</td>
-                    <td>Status</td>
+                    <th>Order Number</th>
+                    <th>Customer</th>
+                    <th>Phone</th>
+                    <th>Address</th>
+                    <th>Date</th>
+                    <th>Total Price</th>
+                    <th>Status</th>
                 </tr>
                 </thead>
-                <c:forEach var="order" items="${orders}">
+                <c:forEach var="order" items="${orders.values()}">
                     <tr>
                         <td>
                             <a href="/admin/orders/${order.id}">
