@@ -1,5 +1,9 @@
 package com.es.core.dao;
 
 public interface OrderDao {
-    void update(int updateReserved, long id);
+    void updateReservedValueById(int updateReserved, long id);
+
+    int getReservedValueById(long id);
+
+    int getStockValueById(long id);
 }

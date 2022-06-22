@@ -57,17 +57,17 @@ public class DefaultOrderService {
         for (CartItem item : cartItemList) {
             long id = item.getStock().getPhone().getId();
             int quantity = item.getQuantity();
-            int stock = item.getStock().getStock();
-            int reserved = item.getStock().getReserved();
+            int stock = orderDao.getStockValueById(id);
+            int reserved = orderDao.getReservedValueById(id);
             int updateReserved = quantity + reserved;
 
             if ((stock - reserved) < quantity) {
                 throw new OrderOutOfStockException();
             } else {
-                orderDao.update(updateReserved, id);
+                orderDao.updateReservedValueById(updateReserved, id);
             }
 
-            item.getStock().setReserved(updateReserved);
+            item.getStock().setReserved(updateReserved * item.getStock().getPhone().getColor().size());
         }
     }
 

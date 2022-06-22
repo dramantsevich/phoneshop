@@ -105,15 +105,15 @@ public class OrderServiceImpl implements OrderService {
 
             for (CartItem item : orderList) {
                 long id = item.getStock().getPhone().getId();
-                int quantity = item.getQuantity();//доставать значения через бд
-                int stock = item.getStock().getStock();
-                int reserved = item.getStock().getReserved();//достать из бд
-                int updateReserved = reserved - quantity;//обновлять reserved до нуля
+                int quantity = item.getQuantity();
+                int stock = orderDao.getStockValueById(id);
+                int reserved = orderDao.getReservedValueById(id);
+                int updateReserved = reserved - quantity;
 
                 if ((stock - reserved) < quantity) {
                     throw new OrderOutOfStockException();
                 } else {
-                    orderDao.update(updateReserved, id);
+                    orderDao. updateReservedValueById(updateReserved, id);
                 }
 
                 item.getStock().setReserved(updateReserved);
