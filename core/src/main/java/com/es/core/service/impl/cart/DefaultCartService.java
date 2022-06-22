@@ -1,9 +1,7 @@
 package com.es.core.service.impl.cart;
 
 import com.es.core.dao.StockDao;
-import com.es.core.exception.NegativeQuantityException;
-import com.es.core.exception.OutOfStockException;
-import com.es.core.exception.PhoneNotFoundException;
+import com.es.core.exception.*;
 import com.es.core.model.cart.Cart;
 import com.es.core.model.cart.CartItem;
 import com.es.core.model.phone.Stock;
@@ -19,25 +17,23 @@ public class DefaultCartService {
     @Autowired
     private StockDao stockDao;
 
-    protected Optional<CartItem> findCartItemForUpdate(Cart cart, Long phoneId, int quantity) throws OutOfStockException {
-        if (quantity <= 0) {
-            throw new NegativeQuantityException();
-        }
-
+    protected Optional<CartItem> findCartItemForUpdate(Cart cart, Long phoneId, Long quantity) throws OutOfStockException {
         List<CartItem> cartList = cart.getItems();
         Stock phone = stockDao.getPhoneById(phoneId).orElseThrow(PhoneNotFoundException::new);
-        CartItem cartItem = new CartItem(phone, quantity);
 
         return cartList.stream()
-                .filter(c -> c.getStock().getPhone().getId().equals(cartItem.getStock().getPhone().getId()))
+                .filter(c -> c.getStock().getPhone().getId()
+                        .equals(new CartItem(phone, quantity).getStock().getPhone().getId()))
                 .findAny();
     }
 
     public void recalculateCartQuantity(Cart cart) {
-        int totalQuantity = cart.getItems().stream()
-                .map(CartItem::getQuantity).mapToInt(Integer::intValue).sum();
+        long totalQuantity = cart.getItems().stream()
+                .map(CartItem::getQuantity)
+                .mapToLong(Long::longValue)
+                .sum();
 
-        cart.setTotalQuantity(totalQuantity);
+        cart.setTotalQuantity((int) totalQuantity);
     }
 
     public void recalculateCartTotalCost(Cart cart) {
@@ -46,5 +42,23 @@ public class DefaultCartService {
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
 
         cart.setTotalCost(totalCost);
+    }
+
+    public Stock getPhone(Long phoneId, Long quantity){
+        Stock phone = stockDao.getPhoneById(phoneId).orElseThrow(PhoneNotFoundException::new);
+
+        if (phone.getPhone().getPrice() == null) {
+            throw new PhonePriceException();
+        }
+
+        if (quantity == null) {
+            throw new QuantityNullException();
+        }
+
+        if (quantity <= 0) {
+            throw new NegativeQuantityException();
+        }
+
+        return phone;
     }
 }

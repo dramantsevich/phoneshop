@@ -5,7 +5,6 @@ import com.es.core.exception.PhoneNotFoundException;
 import com.es.core.service.OrderService;
 import com.es.core.dao.StockDao;
 import com.es.core.exception.OrderNotFoundException;
-import com.es.core.exception.OrderOutOfStockException;
 import com.es.core.model.cart.Cart;
 import com.es.core.model.cart.CartItem;
 import com.es.core.model.order.Order;
@@ -38,14 +37,12 @@ public class OrderServiceImpl implements OrderService {
     public Order createOrder(Cart cart) {
         Order order = new Order();
         List<CartItem> cartItemList = new ArrayList<>();
-        CartItem newCartItem;
 
         for (CartItem cartItem : cart.getItems()) {
             Stock phone = stockDao.getPhoneById(cartItem.getStock().getPhone().getId())
                     .orElseThrow(PhoneNotFoundException::new);
-            newCartItem = new CartItem(phone, cartItem.getQuantity());
 
-            cartItemList.add(newCartItem);
+            cartItemList.add(new CartItem(phone, cartItem.getQuantity()));
             order.setItems(cartItemList);
             order.setSubtotal(cart.getTotalCost());
             order.setDeliveryPrice(new BigDecimal(deliveryPrice));
@@ -74,10 +71,10 @@ public class OrderServiceImpl implements OrderService {
         Map<AtomicLong, Order> orderMap = defaultOrderService.getOrderMap();
         Order order = null;
 
-        for(Map.Entry<AtomicLong, Order> e : orderMap.entrySet()) {
+        for (Map.Entry<AtomicLong, Order> e : orderMap.entrySet()) {
             order = e.getValue();
 
-            if(order.getSecureId().equals(id)) {
+            if (order.getSecureId().equals(id)) {
                 return order;
             }
         }
@@ -105,16 +102,11 @@ public class OrderServiceImpl implements OrderService {
 
             for (CartItem item : orderList) {
                 long id = item.getStock().getPhone().getId();
-                int quantity = item.getQuantity();
-                int stock = orderDao.getStockValueById(id);
+                int quantity = item.getQuantity().intValue();
                 int reserved = orderDao.getReservedValueById(id);
                 int updateReserved = reserved - quantity;
 
-                if ((stock - reserved) < quantity) {
-                    throw new OrderOutOfStockException();
-                } else {
-                    orderDao. updateReservedValueById(updateReserved, id);
-                }
+                orderDao.updateReservedValueById(updateReserved, id);
 
                 item.getStock().setReserved(updateReserved);
                 order.setStatus(orderStatus);

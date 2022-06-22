@@ -1,5 +1,6 @@
 <%@ taglib prefix="tags" tagdir="/WEB-INF/tags" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 
 
@@ -28,10 +29,12 @@
                 <p>${phone.description}</p>
                 <div>
                     <div class="col-md-12 bottom-rule">
-                        <h5>Stock - ${stock.stock}</h5>
+                        <h5>Stock - <fmt:formatNumber value="${stock.stock/stock.phone.color.size()}"
+                                                      maxFractionDigits="0" /></h5>
                     </div>
                     <div class="col-md-12 bottom-rule">
-                        <h5>Reserved - ${stock.reserved}</h5>
+                        <h5>Reserved - <fmt:formatNumber value="${stock.reserved/stock.phone.color.size()}"
+                                                         maxFractionDigits="0" /></h5>
                     </div>
                     <div class="row">
                         <div class="col-md-12 bottom-rule">

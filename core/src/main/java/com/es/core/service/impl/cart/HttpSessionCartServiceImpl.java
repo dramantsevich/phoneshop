@@ -1,11 +1,8 @@
 package com.es.core.service.impl.cart;
 
-import com.es.core.exception.PhoneNotFoundException;
+import com.es.core.exception.*;
 import com.es.core.service.CartService;
 import com.es.core.dao.StockDao;
-import com.es.core.exception.OutOfStockException;
-import com.es.core.exception.PhonePriceException;
-import com.es.core.exception.QuantityNullException;
 import com.es.core.model.cart.Cart;
 import com.es.core.model.cart.CartItem;
 import com.es.core.model.phone.Stock;
@@ -41,27 +38,21 @@ public class HttpSessionCartServiceImpl implements CartService {
 
     @Override
     public void addPhone(Cart cart, Long phoneId, Long quantity) throws OutOfStockException {
-        if (quantity == null) {
-            throw new QuantityNullException();
-        }
+        Optional<CartItem> cartItemOptional = defaultCartService.findCartItemForUpdate(cart, phoneId, quantity);
+        Long productsAmount = cartItemOptional.map(CartItem::getQuantity).orElse(0L);
 
-        Optional<CartItem> cartItemOptional = defaultCartService.findCartItemForUpdate(cart, phoneId, quantity.intValue());
-        int productsAmount = cartItemOptional.map(CartItem::getQuantity).orElse(0);
+        Stock phone = defaultCartService.getPhone(phoneId, quantity);
 
-        Stock phone = stockDao.getPhoneById(phoneId).orElseThrow(PhoneNotFoundException::new);
-        if (phone.getPhone().getPrice() == null) {
-            throw new PhonePriceException();
-        }
-
-        if ((phone.getStock() - phone.getReserved()) < productsAmount + quantity) {
+        int colorSize = phone.getPhone().getColor().size();
+        if ((phone.getStock()/colorSize - phone.getReserved()/colorSize) < productsAmount + quantity) {
             throw new OutOfStockException();
         }
 
         List<CartItem> cartList = cart.getItems();
-        CartItem cartItem = new CartItem(phone, quantity.intValue());
+        CartItem cartItem = new CartItem(phone, quantity);
 
         if (cartItemOptional.isPresent()) {
-            cartItemOptional.get().setQuantity(quantity.intValue() + productsAmount);
+            cartItemOptional.get().setQuantity(quantity + productsAmount);
         } else {
             cartList.add(cartItem);
         }
@@ -72,32 +63,24 @@ public class HttpSessionCartServiceImpl implements CartService {
 
     @Override
     public void update(Cart cart, Long phoneId, String quantity) {
-        if(StringUtils.isEmpty(quantity)) {
+        if (StringUtils.isEmpty(quantity)) {
             throw new NumberFormatException();
         }
 
-        Long quantityLong = Long.valueOf(quantity);
+        long quantityLong = Long.parseLong(quantity);
+        Stock phone = defaultCartService.getPhone(phoneId, quantityLong);
 
-        if (quantityLong == null) {
-            throw new QuantityNullException();
-        }
-
-        Stock phone = stockDao.getPhoneById(phoneId).orElseThrow(PhoneNotFoundException::new);
-
-        if (phone.getPhone().getPrice() == null) {
-            throw new PhonePriceException();
-        }
-
-        if ((phone.getStock() - phone.getReserved()) < quantityLong) {
+        int colorSize = phone.getPhone().getColor().size();
+        if ((phone.getStock()/colorSize - phone.getReserved()/colorSize) < quantityLong) {
             throw new OutOfStockException();
         }
 
-        Optional<CartItem> cartItemOptional = defaultCartService.findCartItemForUpdate(cart, phoneId, quantityLong.intValue());
+        Optional<CartItem> cartItemOptional = defaultCartService.findCartItemForUpdate(cart, phoneId, quantityLong);
         List<CartItem> cartList = cart.getItems();
-        CartItem cartItem = new CartItem(phone, quantityLong.intValue());
+        CartItem cartItem = new CartItem(phone, quantityLong);
 
         if (cartItemOptional.isPresent()) {
-            cartItemOptional.get().setQuantity(quantityLong.intValue());
+            cartItemOptional.get().setQuantity(quantityLong);
         } else {
             cartList.add(cartItem);
         }

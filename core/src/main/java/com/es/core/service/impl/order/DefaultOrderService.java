@@ -56,7 +56,7 @@ public class DefaultOrderService {
 
         for (CartItem item : cartItemList) {
             long id = item.getStock().getPhone().getId();
-            int quantity = item.getQuantity();
+            int quantity = item.getQuantity().intValue();
             int stock = orderDao.getStockValueById(id);
             int reserved = orderDao.getReservedValueById(id);
             int updateReserved = quantity + reserved;

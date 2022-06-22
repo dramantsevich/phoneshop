@@ -5,9 +5,9 @@ import com.es.core.model.phone.Stock;
 public class CartItem {
     private Stock stock;
 
-    private int quantity;
+    private Long quantity;
 
-    public CartItem(Stock stock, int quantity) {
+    public CartItem(Stock stock, Long quantity) {
         this.stock = stock;
         this.quantity = quantity;
     }
@@ -25,11 +25,11 @@ public class CartItem {
         this.stock = stock;
     }
 
-    public int getQuantity() {
+    public Long getQuantity() {
         return quantity;
     }
 
-    public void setQuantity(int quantity) {
+    public void setQuantity(Long quantity) {
         this.quantity = quantity;
     }
 }
