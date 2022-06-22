@@ -18,44 +18,50 @@
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js">
 
-    </script><script type="text/javascript">
-    function addToCart(id, totalQuantity, totalCost) {
-        //получаю айдишник и беру по айдишнику quantity
+    </script>
+    <script type="text/javascript">
+        function addToCart(id, totalQuantity, totalCost) {
+            //получаю айдишник и беру по айдишнику quantity
 
-        var quantity = $("#" + id).val();
+            var quantity = $("#" + id).val();
 
-        var Data = {
-            "id": id,
-            "quantity": quantity,
-            "totalQuantity": totalQuantity,
-            "totalCost" : totalCost
-        }
-        console.log(Data);
-
-        $.ajax({
-            type: "POST",
-            url: "/ajaxCart",
-            headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json'
-            },
-            data: JSON.stringify(Data),
-            success: function (data) {
-                $('#feedback' + id).empty();
-
-                console.log("SUCCESS : ", data);
-
-                $("#cartTotalQuantity").text("quantity: " + data.totalQuantity);
-                $("#cartTotalCost").text("$" + data.totalCost);
-            },
-            error: function (e) {
-                $('#feedback' + id).text(e.responseText)
-
-                console.log("ERROR : ", e);
+            var Data = {
+                "id": id,
+                "quantity": quantity,
+                "totalQuantity": totalQuantity,
+                "totalCost": totalCost
             }
-        })
-    }
-</script>
+            console.log(Data);
+
+            if(!Number.isFinite(quantity)){
+                $('#feedback' + id).text('Enter number');
+            }
+
+            $.ajax({
+                type: "POST",
+                url: "/ajaxCart",
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                },
+                data: JSON.stringify(Data),
+                success: function (data) {
+                    $('#feedback' + id).empty();
+
+                    console.log("SUCCESS : ", data);
+
+                    $("#cartTotalQuantity").text("quantity: " + data.totalQuantity);
+                    $("#cartTotalCost").text("$" + data.totalCost);
+                },
+                error: function (e) {
+                    console.log("ERROR : ", e);
+
+                    const mes = $.parseJSON(e.responseText);
+                    $('#feedback' + id).text(mes.message);
+                }
+            })
+        }
+    </script>
 </head>
 <body class="product-list">
 <header>
@@ -66,7 +72,8 @@
     </div>
     <div>
         <h3><a href="${pageContext.request.contextPath}/cart">Cart</a></h3>
-        <h4><span id="cartTotalQuantity">quantity: ${cart.totalQuantity}</span>, <span id="cartTotalCost">$${cart.totalCost}</span></h4>
+        <h4><span id="cartTotalQuantity">quantity: ${cart.totalQuantity}</span>, <span
+                id="cartTotalCost">$${cart.totalCost}</span></h4>
     </div>
     <div>
         <c:choose>
@@ -74,7 +81,9 @@
                 <form method="post" action="/logout">
                     <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}">
                     <p>Welcome <a href="/admin/orders">${pageContext.request.userPrincipal.name}</a>
-                        | <button type="submit">Logout</button></p>
+                        |
+                        <button type="submit">Logout</button>
+                    </p>
                 </form>
             </c:when>
             <c:otherwise>

@@ -4,6 +4,7 @@ import com.es.core.model.cart.Cart;
 import com.es.core.service.CartService;
 import com.es.core.exception.OutOfStockException;
 import com.es.core.dto.CartItemDTO;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,13 +21,13 @@ public class AjaxCartController {
     @Resource
     private CartService cartService;
 
-    @RequestMapping(method = RequestMethod.POST, produces = "application/json", consumes = "application/json")
-    public ResponseEntity<?> addPhone(@RequestBody CartItemDTO cartItemDTO,
+    @PostMapping (produces = "application/json", consumes = "application/json")
+    public ResponseEntity<Cart> addPhone(@Valid @RequestBody CartItemDTO cartItemDTO,
                                       Model model,
                                       HttpServletRequest request) throws OutOfStockException {
         Cart cart = cartService.getCart(request);
 
-        cartService.addPhone(cart, cartItemDTO.getId(), Long.valueOf(cartItemDTO.getQuantity()));
+        cartService.addPhone(cart, cartItemDTO.getId(), cartItemDTO.getQuantity());
 
         model.addAttribute("cart", cart);
 
