@@ -2,18 +2,22 @@ package com.es.core.dao.impl;
 
 import com.es.core.dao.OrderDao;
 import com.es.core.exception.NoDataFoundBySQLException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.Resource;
 import java.util.Optional;
 
 @Component
 public class OrderDaoImpl implements OrderDao {
-    @Resource
-    private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
+    private final NamedParameterJdbcTemplate namedParameterJdbcTemplate;
+
+    @Autowired
+    public OrderDaoImpl(NamedParameterJdbcTemplate namedParameterJdbcTemplate) {
+        this.namedParameterJdbcTemplate = namedParameterJdbcTemplate;
+    }
 
     @Override
     public void updateReservedValueById(int updateReserved, long id) {
@@ -48,7 +52,7 @@ public class OrderDaoImpl implements OrderDao {
                 .addValue("id", id);
 
         return Optional.ofNullable(namedParameterJdbcTemplate
-                .queryForObject(sql, parameter, Integer.class))
+                        .queryForObject(sql, parameter, Integer.class))
                 .orElseThrow(NoDataFoundBySQLException::new);
     }
 }

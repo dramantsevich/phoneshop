@@ -2,7 +2,6 @@ package com.es.core.service.impl.cart;
 
 import com.es.core.exception.*;
 import com.es.core.service.CartService;
-import com.es.core.dao.StockDao;
 import com.es.core.model.cart.Cart;
 import com.es.core.model.cart.CartItem;
 import com.es.core.model.phone.Stock;
@@ -17,11 +16,12 @@ import java.util.Optional;
 
 @Service
 public class HttpSessionCartServiceImpl implements CartService {
-    @Autowired
-    private StockDao stockDao;
+    private final DefaultCartService defaultCartService;
 
     @Autowired
-    private DefaultCartService defaultCartService;
+    public HttpSessionCartServiceImpl(DefaultCartService defaultCartService) {
+        this.defaultCartService = defaultCartService;
+    }
 
     private static final String CART_SESSION_ATTRIBUTE = HttpSessionCartServiceImpl.class.getName() + ".cart";
 
@@ -37,14 +37,14 @@ public class HttpSessionCartServiceImpl implements CartService {
     }
 
     @Override
-    public void addPhone(Cart cart, Long phoneId, Long quantity) throws OutOfStockException {
+    public void addPhone(Cart cart, Long phoneId, Long quantity) {
         Optional<CartItem> cartItemOptional = defaultCartService.findCartItemForUpdate(cart, phoneId, quantity);
         Long productsAmount = cartItemOptional.map(CartItem::getQuantity).orElse(0L);
 
         Stock phone = defaultCartService.getPhone(phoneId, quantity);
 
         int colorSize = phone.getPhone().getColor().size();
-        if ((phone.getStock()/colorSize - phone.getReserved()/colorSize) < productsAmount + quantity) {
+        if ((phone.getStock() / colorSize - phone.getReserved() / colorSize) < productsAmount + quantity) {
             throw new OutOfStockException();
         }
 
@@ -71,7 +71,7 @@ public class HttpSessionCartServiceImpl implements CartService {
         Stock phone = defaultCartService.getPhone(phoneId, quantityLong);
 
         int colorSize = phone.getPhone().getColor().size();
-        if ((phone.getStock()/colorSize - phone.getReserved()/colorSize) < quantityLong) {
+        if ((phone.getStock() / colorSize - phone.getReserved() / colorSize) < quantityLong) {
             throw new OutOfStockException();
         }
 

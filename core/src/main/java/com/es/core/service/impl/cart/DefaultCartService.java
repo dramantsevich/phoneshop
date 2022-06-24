@@ -14,8 +14,12 @@ import java.util.Optional;
 
 @Service
 public class DefaultCartService {
+    private final StockDao stockDao;
+
     @Autowired
-    private StockDao stockDao;
+    public DefaultCartService(StockDao stockDao) {
+        this.stockDao = stockDao;
+    }
 
     protected Optional<CartItem> findCartItemForUpdate(Cart cart, Long phoneId, Long quantity) throws OutOfStockException {
         List<CartItem> cartList = cart.getItems();
@@ -44,7 +48,7 @@ public class DefaultCartService {
         cart.setTotalCost(totalCost);
     }
 
-    public Stock getPhone(Long phoneId, Long quantity){
+    public Stock getPhone(Long phoneId, Long quantity) {
         Stock phone = stockDao.getPhoneById(phoneId).orElseThrow(PhoneNotFoundException::new);
 
         if (phone.getPhone().getPrice() == null) {

@@ -24,14 +24,18 @@ public class OrderServiceImpl implements OrderService {
     @Value("${delivery.price}")
     private String deliveryPrice;
 
-    @Autowired
-    private StockDao stockDao;
+    private final StockDao stockDao;
+
+    private final OrderDao orderDao;
+
+    private final DefaultOrderService defaultOrderService;
 
     @Autowired
-    private OrderDao orderDao;
-
-    @Autowired
-    private DefaultOrderService defaultOrderService;
+    public OrderServiceImpl(StockDao stockDao, OrderDao orderDao, DefaultOrderService defaultOrderService) {
+        this.stockDao = stockDao;
+        this.orderDao = orderDao;
+        this.defaultOrderService = defaultOrderService;
+    }
 
     @Override
     public Order createOrder(Cart cart) {

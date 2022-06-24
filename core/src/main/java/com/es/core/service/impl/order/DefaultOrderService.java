@@ -17,8 +17,12 @@ import java.util.function.Consumer;
 
 @Service
 public class DefaultOrderService {
+    private final OrderDao orderDao;
+
     @Autowired
-    private OrderDao orderDao;
+    public DefaultOrderService(OrderDao orderDao) {
+        this.orderDao = orderDao;
+    }
 
     private final AtomicLong orderId = new AtomicLong(0);
 
@@ -39,10 +43,10 @@ public class DefaultOrderService {
     public Order getItem(Long id) {
         Order order = null;
 
-        for(Map.Entry<AtomicLong, Order> e : orderMap.entrySet()) {
+        for (Map.Entry<AtomicLong, Order> e : orderMap.entrySet()) {
             order = e.getValue();
 
-            if(order.getId().equals(id)) {
+            if (order.getId().equals(id)) {
                 return order;
             }
         }

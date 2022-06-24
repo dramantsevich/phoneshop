@@ -9,17 +9,20 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.Resource;
 import java.util.List;
 import java.util.Optional;
 
 @Component
 public class JdbcPhoneDao implements PhoneDao {
-    @Resource
-    private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
+    private final NamedParameterJdbcTemplate namedParameterJdbcTemplate;
+
+    private final PhoneMapper phoneMapper;
 
     @Autowired
-    private PhoneMapper phoneMapper;
+    public JdbcPhoneDao(NamedParameterJdbcTemplate namedParameterJdbcTemplate, PhoneMapper phoneMapper) {
+        this.namedParameterJdbcTemplate = namedParameterJdbcTemplate;
+        this.phoneMapper = phoneMapper;
+    }
 
     public Optional<Phone> get(final Long key) {
         throw new UnsupportedOperationException("TODO");
