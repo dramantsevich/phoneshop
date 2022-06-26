@@ -1,4 +1,4 @@
-package com.es.phoneshop;
+package com.es.phoneshop.integration;
 
 import com.es.core.exception.PhoneNotFoundException;
 import com.es.core.service.OrderService;
@@ -18,12 +18,14 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.atomic.AtomicLong;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = "testContext.xml")
+@ContextConfiguration(locations = "classpath:/testContext.xml")
 public class OrderServiceTest {
     @Autowired
     private OrderService orderService;
@@ -49,7 +51,7 @@ public class OrderServiceTest {
         int oldReservedCount = order.getItems().get(0).getStock().getReserved();
         orderService.placeOrder(order);
 
-        assertThat(order.getId()).isGreaterThan(0L);
+        assertThat(order.getId()).isPositive();
         assertThat(order.getSecureId()).isNotNull();
         assertThat(order.getDeliveryDate()).isNotNull();
         assertThat(order.getItems().get(0).getStock().getReserved()).isGreaterThan(oldReservedCount);
@@ -83,15 +85,17 @@ public class OrderServiceTest {
 
     @Test
     public void testGetOrders() {
+        Map<AtomicLong, Order> orderList = orderService.getOrders();
+        orderList.clear();
+
         Phone phone = createPhoneWithPrice();
         List<CartItem> cartItemList = createCartItem(phone);
         Cart cart = createCart(cartItemList);
         Order order = orderService.createOrder(cart);
 
         orderService.placeOrder(order);
-        List<Order> orderList = orderService.getOrders();
 
-        assertThat(orderList.size()).isEqualTo(1);
+        assertThat(orderList).hasSize(1);
     }
 
     @Test
@@ -146,8 +150,10 @@ public class OrderServiceTest {
         Order order = orderService.createOrder(cart);
 
         assertThatThrownBy(() -> {
-            orderService.setStatus(order, OrderStatus.REJECTED);
+            orderService.placeOrder(order);
         }).isInstanceOf(OrderOutOfStockException.class);
+
+        orderService.setStatus(order, OrderStatus.REJECTED);
     }
 
     private Cart createCart(List<CartItem> cartItemList) {
@@ -172,7 +178,7 @@ public class OrderServiceTest {
         stock.setStock(11);
         stock.setReserved(0);
 
-        cartItemList.add(new CartItem(stock, 2));
+        cartItemList.add(new CartItem(stock, 2L));
 
         return cartItemList;
     }
@@ -185,7 +191,7 @@ public class OrderServiceTest {
         stock.setStock(11);
         stock.setReserved(0);
 
-        cartItemList.add(new CartItem(stock, 100));
+        cartItemList.add(new CartItem(stock, 100L));
 
         return cartItemList;
     }

@@ -1,4 +1,4 @@
-package com.es.phoneshop;
+package com.es.phoneshop.unit;
 
 import com.es.core.service.CartService;
 import com.es.core.service.impl.cart.DefaultCartService;
@@ -17,9 +17,9 @@ import java.util.List;
 import static org.mockito.Mockito.*;
 
 public class CartTest {
-    private CartService mockCartService = mock(CartService.class);
+    private final CartService mockCartService = mock(CartService.class);
 
-    private DefaultCartService mockDefaultCartService = mock(DefaultCartService.class);
+    private final DefaultCartService mockDefaultCartService = mock(DefaultCartService.class);
 
     @SneakyThrows
     @Test
@@ -41,7 +41,8 @@ public class CartTest {
         Long id = cart.getItems().get(0).getStock().getPhone().getId();
         Long quantity = (long) cart.getTotalQuantity();
 
-        doNothing().when(mockCartService).addPhone(cart, id, quantity);
+        mockCartService.addPhone(cart, id, quantity);
+
         int size = cart.getItems().size();
 
         Assert.assertEquals(1, size);
@@ -57,9 +58,7 @@ public class CartTest {
         doReturn(2)
                 .when(cart).getTotalQuantity();
 
-        doNothing()
-                .when(mockDefaultCartService)
-                .recalculateCartTotalCost(cart);
+        mockDefaultCartService.recalculateCartTotalCost(cart);
 
         Assert.assertEquals(cart.getTotalCost(), BigDecimal.valueOf(198.0));
     }
@@ -74,11 +73,9 @@ public class CartTest {
         doReturn(2)
                 .when(cart).getTotalQuantity();
 
-        doNothing()
-                .when(mockDefaultCartService)
-                .recalculateCartQuantity(cart);
+        mockDefaultCartService.recalculateCartQuantity(cart);
 
-        Assert.assertEquals(cart.getTotalQuantity(), 2);
+        Assert.assertEquals(2, cart.getTotalQuantity());
     }
 
     private List<CartItem> createCartItem() {
@@ -90,7 +87,7 @@ public class CartTest {
         stock.setStock(11);
         stock.setReserved(0);
 
-        cartItemList.add(new CartItem(stock, 2));
+        cartItemList.add(new CartItem(stock, 2L));
 
         return cartItemList;
     }

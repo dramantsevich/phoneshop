@@ -1,4 +1,4 @@
-package com.es.phoneshop;
+package com.es.phoneshop.integration;
 
 import com.es.core.exception.*;
 import com.es.core.service.CartService;
@@ -6,6 +6,8 @@ import com.es.core.model.cart.Cart;
 import com.es.core.model.cart.CartItem;
 import com.es.core.model.phone.Phone;
 import com.es.core.model.phone.Stock;
+import com.es.core.service.impl.cart.DefaultCartService;
+import com.es.core.service.impl.cart.HttpSessionCartServiceImpl;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,9 +22,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = "testContext.xml")
+@ContextConfiguration(locations = "classpath:/testContext.xml")
 public class CartServiceTest {
-
     @Autowired
     private CartService cartService;
 
@@ -31,7 +32,7 @@ public class CartServiceTest {
         Phone phone = createPhoneWithPrice();
         Cart cart = createCart(phone);
         Long id = cart.getItems().get(0).getStock().getPhone().getId();
-        String quantityToUpdate = "4L";
+        String quantityToUpdate = "4";
 
         cartService.update(cart, id, quantityToUpdate);
 
@@ -39,14 +40,14 @@ public class CartServiceTest {
     }
 
     @Test
-    public void testCartUpdateThrowQuantityNullException() {
+    public void testCartUpdateThrowNumberFormatException() {
         Phone phone = createPhoneWithPrice();
         Cart cart = createCart(phone);
         Long id = cart.getItems().get(0).getStock().getPhone().getId();
 
         assertThatThrownBy(() -> {
             cartService.update(cart, id, null);
-        }).isInstanceOf(QuantityNullException.class);
+        }).isInstanceOf(NumberFormatException.class);
     }
 
     @Test
@@ -56,7 +57,7 @@ public class CartServiceTest {
         Long id = cart.getItems().get(0).getStock().getPhone().getId();
 
         assertThatThrownBy(() -> {
-            cartService.update(cart, id, "4L");
+            cartService.update(cart, id, "4");
         }).isInstanceOf(PhonePriceException.class);
     }
 
@@ -67,7 +68,7 @@ public class CartServiceTest {
         Long id = cart.getItems().get(0).getStock().getPhone().getId();
 
         assertThatThrownBy(() -> {
-            cartService.update(cart, id, "100L");
+            cartService.update(cart, id, "100");
         }).isInstanceOf(OutOfStockException.class);
     }
 
@@ -78,7 +79,7 @@ public class CartServiceTest {
         Long id = cart.getItems().get(0).getStock().getPhone().getId();
 
         assertThatThrownBy(() -> {
-            cartService.update(cart, id, "-100L");
+            cartService.update(cart, id, "-100");
         }).isInstanceOf(NegativeQuantityException.class);
     }
 
@@ -95,14 +96,14 @@ public class CartServiceTest {
     }
 
     @Test
-    public void testСlearCart() {
+    public void testClearCart() {
         Phone phone = createPhoneWithPrice();
         Cart cart = createCart(phone);
 
         CartItem cartItem = createCartItem(createPhoneWithoutPrice()).get(0);
         cart.getItems().add(cartItem);
 
-        assertThat(cart.getItems().size()).isEqualTo(2);
+        assertThat(cart.getItems()).hasSize(2);
 
         cartService.clearCart(cart);
 
@@ -131,7 +132,7 @@ public class CartServiceTest {
         stock.setStock(11);
         stock.setReserved(0);
 
-        cartItemList.add(new CartItem(stock, 2));
+        cartItemList.add(new CartItem(stock, 2L));
 
         return cartItemList;
     }

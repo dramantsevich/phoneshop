@@ -1,4 +1,4 @@
-package com.es.phoneshop;
+package com.es.phoneshop.integration;
 
 import com.es.core.dao.StockDao;
 import com.es.core.exception.PhoneNotFoundException;
@@ -21,7 +21,7 @@ import java.util.Set;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = "testContext.xml")
+@ContextConfiguration(locations = "classpath:/testContext.xml")
 public class StockDaoTest {
     @Autowired
     private StockDao stockDao;
@@ -30,7 +30,7 @@ public class StockDaoTest {
     public void testGetPhoneByIdWithStock() {
         Stock phone = stockDao.getPhoneById(1011L).orElseThrow(PhoneNotFoundException::new);
 
-        assertThat(phone.getStock()).isGreaterThan(0);
+        assertThat(phone.getStock()).isPositive();
         assertThat(phone.getPhone().getId()).isEqualTo(1011L);
     }
 
