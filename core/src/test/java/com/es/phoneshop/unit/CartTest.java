@@ -18,21 +18,14 @@ import static org.mockito.Mockito.*;
 
 public class CartTest {
     private final CartService mockCartService = mock(CartService.class);
-
     private final DefaultCartService mockDefaultCartService = mock(DefaultCartService.class);
 
     @SneakyThrows
     @Test
     public void testAddPhoneWorksCorrectly() {
         Cart cart = mock(Cart.class);
-        doReturn(BigDecimal.valueOf(198.0))
-                .when(cart)
-                .getTotalCost();
-        doReturn(2)
-                .when(cart)
-                .getTotalQuantity();
 
-        List<CartItem> cartItemList = createCartItem();
+        List<CartItem> cartItemList = createCartItem(createPhone());
 
         doReturn(cartItemList)
                 .when(cart)
@@ -41,6 +34,20 @@ public class CartTest {
         Long id = cart.getItems().get(0).getStock().getPhone().getId();
         Long quantity = (long) cart.getTotalQuantity();
 
+        doNothing().when(mockCartService).addPhone(isA(Cart.class), isA(Long.class), isA(Long.class));
+        mockCartService.addPhone(cart, id, quantity);
+        verify(mockCartService, times(1)).addPhone(cart, id, quantity);
+
+        doAnswer(invocation -> {
+            Object arg0 = invocation.getArgument(0);
+            Object arg1 = invocation.getArgument(1);
+            Object arg2 = invocation.getArgument(2);
+
+            Assert.assertEquals(cart, arg0);
+            Assert.assertEquals(id, arg1);
+            Assert.assertEquals(quantity, arg2);
+            return null;
+        }).when(mockCartService).addPhone(any(Cart.class), any(Long.class), any(Long.class));
         mockCartService.addPhone(cart, id, quantity);
 
         int size = cart.getItems().size();
@@ -53,14 +60,10 @@ public class CartTest {
     public void testCartTotalCostCalculationWorksCorrectly() {
         Cart cart = mock(Cart.class);
 
-        doReturn(BigDecimal.valueOf(198.0))
-                .when(cart).getTotalCost();
-        doReturn(2)
-                .when(cart).getTotalQuantity();
-
+        doNothing().when(mockDefaultCartService).recalculateCartTotalCost(cart);
         mockDefaultCartService.recalculateCartTotalCost(cart);
 
-        Assert.assertEquals(cart.getTotalCost(), BigDecimal.valueOf(198.0));
+        verify(mockDefaultCartService, times(1)).recalculateCartTotalCost(cart);
     }
 
     @SneakyThrows
@@ -68,19 +71,14 @@ public class CartTest {
     public void testCartTotalQuantityCalculationWorksCorrectly() {
         Cart cart = mock(Cart.class);
 
-        doReturn(BigDecimal.valueOf(198.0))
-                .when(cart).getTotalCost();
-        doReturn(2)
-                .when(cart).getTotalQuantity();
-
+        doNothing().when(mockDefaultCartService).recalculateCartQuantity(cart);
         mockDefaultCartService.recalculateCartQuantity(cart);
 
-        Assert.assertEquals(2, cart.getTotalQuantity());
+        verify(mockDefaultCartService, times(1)).recalculateCartQuantity(cart);
     }
 
-    private List<CartItem> createCartItem() {
+    private List<CartItem> createCartItem(Phone phone) {
         List<CartItem> cartItemList = new ArrayList<>();
-        Phone phone = createPhone();
 
         Stock stock = new Stock();
         stock.setPhone(phone);
