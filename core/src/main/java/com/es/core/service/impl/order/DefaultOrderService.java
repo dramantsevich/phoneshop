@@ -12,6 +12,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicLong;
 import java.util.function.Consumer;
 
 @Service
@@ -23,7 +24,7 @@ public class DefaultOrderService {
         this.orderDao = orderDao;
     }
 
-    private long orderId;
+    private final AtomicLong orderId = new AtomicLong(0);
 
     private final Map<Long, Order> orderMap = new HashMap();
 
@@ -32,10 +33,11 @@ public class DefaultOrderService {
     }
 
     public void save(Order item) {
+        long id = orderId.incrementAndGet();
 
-        item.setId(++orderId);
+        item.setId(id);
 
-        orderMap.put(orderId, item);
+        orderMap.put(id, item);
     }
 
     public Order getItem(Long id) {

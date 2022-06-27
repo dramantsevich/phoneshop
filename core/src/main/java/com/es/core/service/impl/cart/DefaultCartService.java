@@ -21,7 +21,7 @@ public class DefaultCartService {
         this.stockDao = stockDao;
     }
 
-    protected Optional<CartItem> findCartItemForUpdate(Cart cart, Long phoneId, Long quantity) throws OutOfStockException {
+    public Optional<CartItem> findCartItemForUpdate(Cart cart, Long phoneId, Long quantity) throws OutOfStockException {
         List<CartItem> cartList = cart.getItems();
         Stock phone = stockDao.getPhoneById(phoneId).orElseThrow(PhoneNotFoundException::new);
 
