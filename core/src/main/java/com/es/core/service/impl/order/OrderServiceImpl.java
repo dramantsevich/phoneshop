@@ -17,7 +17,6 @@ import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.*;
-import java.util.concurrent.atomic.AtomicLong;
 
 @Service
 public class OrderServiceImpl implements OrderService {
@@ -72,10 +71,10 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public Order getItemBySecureId(String id) {
-        Map<AtomicLong, Order> orderMap = defaultOrderService.getOrderMap();
+        Map<Long, Order> orderMap = defaultOrderService.getOrderMap();
         Order order = null;
 
-        for (Map.Entry<AtomicLong, Order> e : orderMap.entrySet()) {
+        for (Map.Entry<Long, Order> e : orderMap.entrySet()) {
             order = e.getValue();
 
             if (order.getSecureId().equals(id)) {
@@ -86,7 +85,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public Map<AtomicLong, Order> getOrders() {
+    public Map<Long, Order> getOrders() {
         return defaultOrderService.getOrderMap();
     }
 

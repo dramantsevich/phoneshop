@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.util.Map;
-import java.util.concurrent.atomic.AtomicLong;
 
 @Controller
 @RequestMapping(value = "/admin/orders")
@@ -21,7 +20,7 @@ public class OrdersPageController {
 
     @GetMapping
     public String getAdminOrdersPage(Model model) {
-        Map<AtomicLong, Order> orderMap = orderService.getOrders();
+        Map<Long, Order> orderMap = orderService.getOrders();
 
         model.addAttribute("orders", orderMap);
 

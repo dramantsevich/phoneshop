@@ -19,7 +19,6 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.atomic.AtomicLong;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -85,7 +84,7 @@ public class OrderServiceTest {
 
     @Test
     public void testGetOrders() {
-        Map<AtomicLong, Order> orderList = orderService.getOrders();
+        Map<Long, Order> orderList = orderService.getOrders();
         orderList.clear();
 
         Phone phone = createPhoneWithPrice();
