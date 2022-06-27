@@ -36,7 +36,11 @@ public class CartTest {
         doReturn(createStock(phone)).when(mockDefaultCartService).getPhone(phoneId, 1L);
         cartService.addPhone(cart, phoneId, 1L);
 
-        assertThat(cart.getItems()).hasSize(1);
+        doReturn(Optional.empty()).when(mockDefaultCartService).findCartItemForUpdate(cart, 1006L, 2L);
+        doReturn(createStock(createAnotherPhoneWithPrice())).when(mockDefaultCartService).getPhone(1006L, 2L);
+        cartService.addPhone(cart, 1006L, 2L);
+
+        assertThat(cart.getItems()).hasSize(2);
     }
 
     @SneakyThrows
@@ -99,10 +103,7 @@ public class CartTest {
     private List<CartItem> createCartItem(Phone phone, Long quantity) {
         List<CartItem> cartItemList = new ArrayList<>();
 
-        Stock stock = new Stock();
-        stock.setPhone(phone);
-        stock.setStock(11);
-        stock.setReserved(0);
+        Stock stock = createStock(phone);
 
         cartItemList.add(new CartItem(stock, quantity));
 
@@ -123,6 +124,21 @@ public class CartTest {
         phone.setBrand("ARCHOS");
         phone.setModel("ARCHOS 40 Cesium");
         phone.setPrice(new BigDecimal("99.0"));
+        phone.setColor(colorSet);
+
+        return phone;
+    }
+
+    private Phone createAnotherPhoneWithPrice() {
+        Set<Color> colorSet = new HashSet<>();
+        Color white = new Color(1001L, "White");
+        colorSet.add(white);
+
+        Phone phone = new Phone();
+        phone.setId(1006L);
+        phone.setBrand("ARCHOS");
+        phone.setModel("ARCHOS 101 XS 2");
+        phone.setPrice(new BigDecimal("270.0"));
         phone.setColor(colorSet);
 
         return phone;
