@@ -1,12 +1,14 @@
 package com.es.core.model.order;
 
-import java.math.BigDecimal;
-import java.util.List;
+import com.es.core.model.cart.Cart;
 
-public class Order
+import java.math.BigDecimal;
+
+public class Order extends Cart
 {
     private Long id;
-    private List<OrderItem> orderItems;
+
+    private String secureId;
     /**
      *  A sum of order item prices;
      */
@@ -19,6 +21,7 @@ public class Order
 
     private String firstName;
     private String lastName;
+    private String deliveryDate;
     private String deliveryAddress;
     private String contactPhoneNo;
 
@@ -30,14 +33,6 @@ public class Order
 
     public void setId(Long id) {
         this.id = id;
-    }
-
-    public List<OrderItem> getOrderItems() {
-        return orderItems;
-    }
-
-    public void setOrderItems(List<OrderItem> orderItems) {
-        this.orderItems = orderItems;
     }
 
     public BigDecimal getSubtotal() {
@@ -80,6 +75,14 @@ public class Order
         this.lastName = lastName;
     }
 
+    public String getDeliveryDate() {
+        return deliveryDate;
+    }
+
+    public void setDeliveryDate(String deliveryDate) {
+        this.deliveryDate = deliveryDate;
+    }
+
     public String getDeliveryAddress() {
         return deliveryAddress;
     }
@@ -102,5 +105,13 @@ public class Order
 
     public void setStatus(OrderStatus status) {
         this.status = status;
+    }
+
+    public String getSecureId() {
+        return secureId;
+    }
+
+    public void setSecureId(String secureId) {
+        this.secureId = secureId;
     }
 }

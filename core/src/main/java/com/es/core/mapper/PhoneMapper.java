@@ -1,5 +1,7 @@
-package com.es.core.model.phone;
+package com.es.core.mapper;
 
+import com.es.core.model.phone.Color;
+import com.es.core.model.phone.Phone;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;

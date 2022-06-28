@@ -1,5 +1,6 @@
-package com.es.phoneshop;
+package com.es.phoneshop.integration;
 
+import com.es.core.dao.PhoneDao;
 import com.es.core.model.phone.*;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -13,22 +14,21 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = "testContext.xml")
+@ContextConfiguration(locations = "classpath:/testContext.xml")
 public class ProductDaoTest {
     @Autowired
-    private JdbcPhoneDao phoneDao;
+    private PhoneDao phoneDao;
 
     @Test
     public void testFindWithLimit() {
         List<Phone> phoneList = phoneDao.findWithLimit(0, 10);
 
-        assertThat(phoneList).isNotNull();
-        assertThat(phoneList.size()).isEqualTo(10);
+        assertThat(phoneList).isNotNull()
+                .hasSize(10);
     }
 
     @Test
@@ -72,7 +72,7 @@ public class ProductDaoTest {
     @Test
     public void testThatActualPhoneHasImportantFields() {
         List<Phone> phoneList = phoneDao.findWithLimit(0, 10);
-        Phone phoneWithMultiColor = phoneList.get(6);
+        Phone phoneWithMultiColor = phoneList.get(5);
         Phone phone = createPhone();
 
         assertThat(Objects.equals(phoneWithMultiColor.getId(), phone.getId())).isTrue();

@@ -1,5 +1,6 @@
-package com.es.core.model.phone;
+package com.es.core.mapper;
 
+import com.es.core.model.phone.Color;
 import org.springframework.stereotype.Component;
 
 import java.sql.ResultSet;
