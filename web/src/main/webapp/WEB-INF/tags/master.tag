@@ -21,8 +21,6 @@
     </script>
     <script type="text/javascript">
         function addToCart(id, totalQuantity, totalCost) {
-            //получаю айдишник и беру по айдишнику quantity
-
             var quantity = $("#" + id).val();
 
             var Data = {
@@ -45,13 +43,61 @@
                     'Content-Type': 'application/json'
                 },
                 data: JSON.stringify(Data),
-                success: function (data) {
-                    $('#feedback' + id).empty();
+                success: function (res) {
+                    if (res.validated) {
+                        $('#feedback' + id).empty();
 
-                    console.log("SUCCESS : ", data);
+                        $("#cartTotalQuantity").text("quantity: " + res.cart.totalQuantity);
+                        $("#cartTotalCost").text("$" + res.cart.totalCost);
+                    } else {
+                        $.each(res.errorMessages, function (key, value) {
+                            $('#feedback' + id).text(value);
+                        });
+                    }
+                },
+                error: function (e) {
+                    console.log("ERROR : ", e);
 
-                    $("#cartTotalQuantity").text("quantity: " + data.totalQuantity);
-                    $("#cartTotalCost").text("$" + data.totalCost);
+                    const mes = $.parseJSON(e.responseText);
+                    $('#feedback' + id).text(mes.message);
+                }
+            })
+        }
+
+        function updateCart(id, totalQuantity, totalCost) {
+            var quantity = $("#" + id).val();
+
+            var Data = {
+                "id": id,
+                "quantity": quantity,
+                "totalQuantity": totalQuantity,
+                "totalCost": totalCost
+            }
+            console.log(Data);
+
+            if(!Number.isFinite(quantity)){
+                $('#feedback' + id).text('Enter number');
+            }
+
+            $.ajax({
+                type: "POST",
+                url: "/ajaxCart/update",
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                },
+                data: JSON.stringify(Data),
+                success: function (res) {
+                    if (res.validated) {
+                        $('#feedback' + id).empty();
+
+                        $("#cartTotalQuantity").text("quantity: " + res.cart.totalQuantity);
+                        $("#cartTotalCost").text("$" + res.cart.totalCost);
+                    } else {
+                        $.each(res.errorMessages, function (key, value) {
+                            $('#feedback' + id).text(value);
+                        });
+                    }
                 },
                 error: function (e) {
                     console.log("ERROR : ", e);

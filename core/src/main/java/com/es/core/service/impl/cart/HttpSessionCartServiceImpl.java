@@ -5,7 +5,6 @@ import com.es.core.service.CartService;
 import com.es.core.model.cart.Cart;
 import com.es.core.model.cart.CartItem;
 import com.es.core.model.phone.Stock;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -41,7 +40,7 @@ public class HttpSessionCartServiceImpl implements CartService {
         Optional<CartItem> cartItemOptional = defaultCartService.findCartItemForUpdate(cart, phoneId, quantity);
         Long productsAmount = cartItemOptional.map(CartItem::getQuantity).orElse(0L);
 
-        Stock phone = defaultCartService.getPhone(phoneId, quantity);
+        Stock phone = defaultCartService.getPhone(phoneId);
 
         int colorSize = phone.getPhone().getColor().size();
         if ((phone.getStock() / colorSize - phone.getReserved() / colorSize) < productsAmount + quantity) {
@@ -62,25 +61,21 @@ public class HttpSessionCartServiceImpl implements CartService {
     }
 
     @Override
-    public void update(Cart cart, Long phoneId, String quantity) {
-        if (StringUtils.isEmpty(quantity)) {
-            throw new NumberFormatException();
-        }
+    public void update(Cart cart, Long phoneId, Long quantity) {
 
-        long quantityLong = Long.parseLong(quantity);
-        Stock phone = defaultCartService.getPhone(phoneId, quantityLong);
+        Stock phone = defaultCartService.getPhone(phoneId);
 
         int colorSize = phone.getPhone().getColor().size();
-        if ((phone.getStock() / colorSize - phone.getReserved() / colorSize) < quantityLong) {
+        if ((phone.getStock() / colorSize - phone.getReserved() / colorSize) < quantity) {
             throw new OutOfStockException();
         }
 
-        Optional<CartItem> cartItemOptional = defaultCartService.findCartItemForUpdate(cart, phoneId, quantityLong);
+        Optional<CartItem> cartItemOptional = defaultCartService.findCartItemForUpdate(cart, phoneId, quantity);
         List<CartItem> cartList = cart.getItems();
-        CartItem cartItem = new CartItem(phone, quantityLong);
+        CartItem cartItem = new CartItem(phone, quantity);
 
         if (cartItemOptional.isPresent()) {
-            cartItemOptional.get().setQuantity(quantityLong);
+            cartItemOptional.get().setQuantity(quantity);
         } else {
             cartList.add(cartItem);
         }

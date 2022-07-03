@@ -48,19 +48,11 @@ public class DefaultCartService {
         cart.setTotalCost(totalCost);
     }
 
-    public Stock getPhone(Long phoneId, Long quantity) {
+    public Stock getPhone(Long phoneId) {
         Stock phone = stockDao.getPhoneById(phoneId).orElseThrow(PhoneNotFoundException::new);
 
         if (phone.getPhone().getPrice() == null) {
             throw new PhonePriceException();
-        }
-
-        if (quantity == null) {
-            throw new QuantityNullException();
-        }
-
-        if (quantity <= 0) {
-            throw new NegativeQuantityException();
         }
 
         return phone;
