@@ -2,6 +2,7 @@ package com.es.phoneshop.web.controller.pages;
 
 import com.es.core.dto.CartDTO;
 import com.es.core.dto.ValidList;
+import com.es.core.exception.OutOfStockException;
 import com.es.core.model.cart.Cart;
 import com.es.core.service.CartService;
 import com.es.core.service.impl.cart.DefaultCartService;
@@ -36,7 +37,8 @@ public class CartPageController {
                 .map(i -> new CartDTO(i.getStock().getPhone().getId(), i.getStock(), i.getQuantity()))
                 .collect(Collectors.toList());
 
-        cartDTOList.setList(cartList);        model.addAttribute("cartDTOList", cartDTOList);
+        cartDTOList.setList(cartList);
+        model.addAttribute("cartDTOList", cartDTOList);
         model.addAttribute("cart", cart);
 
         return "cart";
@@ -77,14 +79,18 @@ public class CartPageController {
 
             return "cart";
         } else {
-            for (CartDTO item : cartDTOValidList.getList()) {
-                cartService.update(cart, item.getItemId(), item.getQuantity());
+            try {
+                for (CartDTO item : cartDTOValidList.getList()) {
+                    cartService.update(cart, item.getItemId(), item.getQuantity());
+                }
+
+                model.addAttribute("cart", cart);
+                model.addAttribute("cartDTOList", cartDTOValidList);
+
+                return "redirect:/cart";
+            } catch (OutOfStockException e) {
+                return "error";
             }
-
-            model.addAttribute("cart", cart);
-            model.addAttribute("cartDTOList", cartDTOValidList);
-
-            return "redirect:/cart";
         }
     }
 }
