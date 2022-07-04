@@ -39,9 +39,6 @@ public class SearchController {
         Cart cart = cartService.getCart(request);
         Pageable firstPage = PageRequest.of(pageNo - 1, size);
         Page<Stock> stockPage = null;
-        model.addAttribute("sort", sort);
-        model.addAttribute("order", order);
-        model.addAttribute("cart", cart);
 
         if (StringUtils.isEmpty(sort) && StringUtils.isEmpty(order)) {
             stockPage = stockDao.findByKeyword(firstPage, keyword);
@@ -49,16 +46,16 @@ public class SearchController {
             stockPage = stockDao.findSortedPhonesByKeyword(firstPage, sort, order, keyword);
         }
 
-        setAttributesToModel(model, pageNo, stockPage, keyword);
+        model.addAttribute("sort", sort);
+        model.addAttribute("order", order);
+        model.addAttribute("cart", cart);
 
-        return "search";
-    }
-
-    private void setAttributesToModel(Model model, Integer pageNo, Page<Stock> stockPage, String keyword) {
         model.addAttribute("currentPage", pageNo);
         model.addAttribute("totalPages", stockPage.getTotalPages());
         model.addAttribute("phones", stockPage);
         model.addAttribute("numbers", IntStream.range(1, stockPage.getTotalPages()).toArray());
         model.addAttribute("keyword", keyword);
+
+        return "search";
     }
 }

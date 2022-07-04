@@ -34,7 +34,7 @@ public class CartServiceTest {
         Long id = cart.getItems().get(0).getStock().getPhone().getId();
         String quantityToUpdate = "4";
 
-        cartService.update(cart, id, quantityToUpdate);
+        cartService.update(cart, id, 4L);
 
         assertThat(cart.getTotalQuantity()).isEqualTo(Integer.valueOf(quantityToUpdate));
     }
@@ -57,7 +57,7 @@ public class CartServiceTest {
         Long id = cart.getItems().get(0).getStock().getPhone().getId();
 
         assertThatThrownBy(() -> {
-            cartService.update(cart, id, "4");
+            cartService.update(cart, id, 4L);
         }).isInstanceOf(PhonePriceException.class);
     }
 
@@ -68,7 +68,7 @@ public class CartServiceTest {
         Long id = cart.getItems().get(0).getStock().getPhone().getId();
 
         assertThatThrownBy(() -> {
-            cartService.update(cart, id, "100");
+            cartService.update(cart, id, 100L);
         }).isInstanceOf(OutOfStockException.class);
     }
 
@@ -79,7 +79,7 @@ public class CartServiceTest {
         Long id = cart.getItems().get(0).getStock().getPhone().getId();
 
         assertThatThrownBy(() -> {
-            cartService.update(cart, id, "-100");
+            cartService.update(cart, id, -100L);
         }).isInstanceOf(NegativeQuantityException.class);
     }
 

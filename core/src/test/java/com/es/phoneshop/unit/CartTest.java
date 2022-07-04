@@ -33,11 +33,11 @@ public class CartTest {
         Cart cart = createNotEmptyCart(phone, 1L);
 
         doReturn(cartItemOptional).when(mockDefaultCartService).findCartItemForUpdate(cart, phoneId, 1L);
-        doReturn(createStock(phone)).when(mockDefaultCartService).getPhone(phoneId, 1L);
+        doReturn(createStock(phone)).when(mockDefaultCartService).getPhone(phoneId);
         cartService.addPhone(cart, phoneId, 1L);
 
         doReturn(Optional.empty()).when(mockDefaultCartService).findCartItemForUpdate(cart, 1006L, 2L);
-        doReturn(createStock(createAnotherPhoneWithPrice())).when(mockDefaultCartService).getPhone(1006L, 2L);
+        doReturn(createStock(createAnotherPhoneWithPrice())).when(mockDefaultCartService).getPhone(1006L);
         cartService.addPhone(cart, 1006L, 2L);
 
         assertThat(cart.getItems()).hasSize(2);
@@ -51,7 +51,7 @@ public class CartTest {
         Cart cart = new Cart();
 
         doReturn(cartItemOptional).when(mockDefaultCartService).findCartItemForUpdate(cart, phoneId, 1L);
-        doReturn(createStock(phone)).when(mockDefaultCartService).getPhone(phoneId, 1L);
+        doReturn(createStock(phone)).when(mockDefaultCartService).getPhone(phoneId);
         cartService.addPhone(cart, phoneId, 1L);
 
         assertThat(cart.getItems()).hasSize(1);
@@ -65,7 +65,7 @@ public class CartTest {
         Cart cart = createNotEmptyCart(phone, 4L);
 
         doReturn(cartItemOptional).when(mockDefaultCartService).findCartItemForUpdate(cart, phoneId, 4L);
-        doReturn(createStock(phone)).when(mockDefaultCartService).getPhone(phoneId, 4L);
+        doReturn(createStock(phone)).when(mockDefaultCartService).getPhone(phoneId);
 
         assertThatThrownBy(() -> {
             cartService.addPhone(cart, phoneId, 4L);

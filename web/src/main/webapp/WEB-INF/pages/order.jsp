@@ -1,6 +1,7 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="tags" tagdir="/WEB-INF/tags" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 
 <tags:master pageTitle="Order">
     <div id="content">
@@ -61,17 +62,37 @@
             </div>
         </div>
 
-        <form method="post" action="/order">
+        <form:form modelAttribute="orderDTO" method="post" action="${pageContext.request.contextPath}/order" >
             <h2>Your details</h2>
-            <tags:orderFormField name="firstName" label="First Name" order="${order}"
-                                 errors="${errors}"></tags:orderFormField>
-            <tags:orderFormField name="lastName" label="Last Name" order="${order}"
-                                 errors="${errors}"></tags:orderFormField>
-            <tags:orderFormField name="deliveryAddress" label="Address" order="${order}"
-                                 errors="${errors}"></tags:orderFormField>
-            <tags:orderFormField name="contactPhoneNo" label="Phone" order="${order}"
-                                 errors="${errors}"></tags:orderFormField>
-            <button type="submit" class="btn btn-info">Place order</button>
-        </form>
+            <tr>
+                <td>First name</td>
+                <td>
+                    <form:input path="firstName" id="firstName"/>
+                </td>
+                <form:errors path="firstName" cssStyle="color:red"/>
+            </tr>
+            <tr>
+                <td>Last name</td>
+                <td>
+                    <form:input path="lastName" id="lastName"/>
+                </td>
+                <form:errors path="lastName" cssStyle="color:red"/>
+            </tr>
+            <tr>
+                <td>Address</td>
+                <td>
+                    <form:input path="deliveryAddress" id="deliveryAddress"/>
+                </td>
+                <form:errors path="deliveryAddress" cssStyle="color:red"/>
+            </tr>
+            <tr>
+                <td>Phone</td>
+                <td>
+                    <form:input path="contactPhoneNo" id="contactPhoneNo"/>
+                </td>
+                <form:errors path="contactPhoneNo" cssStyle="color:red"/>
+            </tr>
+            <form:button name="Place order" type="submit" class="btn btn-info">Place order</form:button>
+        </form:form>
     </div>
 </tags:master>

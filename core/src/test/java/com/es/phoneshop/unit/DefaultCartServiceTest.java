@@ -59,7 +59,7 @@ public class DefaultCartServiceTest {
     @Test
     public void testGetPhone() {
         doReturn(createOptionalStock(createPhoneWithPrice())).when(mockStockDao).getPhoneById(phoneId);
-        Stock stock = defaultCartService.getPhone(phoneId, 2L);
+        Stock stock = defaultCartService.getPhone(phoneId);
 
         assertThat(stock).isNotNull();
         assertThat(stock.getPhone().getId()).isEqualTo(phoneId);
@@ -71,7 +71,7 @@ public class DefaultCartServiceTest {
         doReturn(createOptionalStock(createPhoneWithoutPrice())).when(mockStockDao).getPhoneById(phoneId);
 
         assertThatThrownBy(() -> {
-            defaultCartService.getPhone(phoneId, 2L);
+            defaultCartService.getPhone(phoneId);
         }).isInstanceOf(PhonePriceException.class);
     }
 
@@ -81,7 +81,7 @@ public class DefaultCartServiceTest {
         doReturn(createOptionalStock(createPhoneWithPrice())).when(mockStockDao).getPhoneById(phoneId);
 
         assertThatThrownBy(() -> {
-            defaultCartService.getPhone(phoneId, null);
+            defaultCartService.getPhone(phoneId);
         }).isInstanceOf(QuantityNullException.class);
     }
 
@@ -91,7 +91,7 @@ public class DefaultCartServiceTest {
         doReturn(createOptionalStock(createPhoneWithPrice())).when(mockStockDao).getPhoneById(phoneId);
 
         assertThatThrownBy(() -> {
-            defaultCartService.getPhone(phoneId, -2L);
+            defaultCartService.getPhone(phoneId);
         }).isInstanceOf(NegativeQuantityException.class);
     }
 

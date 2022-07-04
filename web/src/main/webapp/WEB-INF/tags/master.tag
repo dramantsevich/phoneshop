@@ -21,8 +21,6 @@
     </script>
     <script type="text/javascript">
         function addToCart(id, totalQuantity, totalCost) {
-            //получаю айдишник и беру по айдишнику quantity
-
             var quantity = $("#" + id).val();
 
             var Data = {
@@ -45,13 +43,17 @@
                     'Content-Type': 'application/json'
                 },
                 data: JSON.stringify(Data),
-                success: function (data) {
-                    $('#feedback' + id).empty();
+                success: function (res) {
+                    if (res.validated) {
+                        $('#feedback' + id).empty();
 
-                    console.log("SUCCESS : ", data);
-
-                    $("#cartTotalQuantity").text("quantity: " + data.totalQuantity);
-                    $("#cartTotalCost").text("$" + data.totalCost);
+                        $("#cartTotalQuantity").text("quantity: " + res.cart.totalQuantity);
+                        $("#cartTotalCost").text("$" + res.cart.totalCost);
+                    } else {
+                        $.each(res.errorMessages, function (key, value) {
+                            $('#feedback' + id).text(value);
+                        });
+                    }
                 },
                 error: function (e) {
                     console.log("ERROR : ", e);

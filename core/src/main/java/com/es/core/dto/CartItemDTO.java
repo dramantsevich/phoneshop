@@ -1,14 +1,15 @@
 package com.es.core.dto;
 
-import jakarta.validation.constraints.Min;
 import lombok.Data;
 
+import javax.validation.constraints.*;
 import java.math.BigDecimal;
 
 @Data
 public class CartItemDTO {
     private Long id;
-    @Min(value = 1, message = "enter number")
+    @NotNull(message = "Not null")
+    @Positive(message = "Value must be greater than 0")
     private Long quantity;
     private int totalQuantity;
     private BigDecimal totalCost;
