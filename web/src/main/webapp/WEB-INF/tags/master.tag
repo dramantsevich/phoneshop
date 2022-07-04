@@ -63,50 +63,6 @@
                 }
             })
         }
-
-        function updateCart(id, totalQuantity, totalCost) {
-            var quantity = $("#" + id).val();
-
-            var Data = {
-                "id": id,
-                "quantity": quantity,
-                "totalQuantity": totalQuantity,
-                "totalCost": totalCost
-            }
-            console.log(Data);
-
-            if(!Number.isFinite(quantity)){
-                $('#feedback' + id).text('Enter number');
-            }
-
-            $.ajax({
-                type: "POST",
-                url: "/ajaxCart/update",
-                headers: {
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/json'
-                },
-                data: JSON.stringify(Data),
-                success: function (res) {
-                    if (res.validated) {
-                        $('#feedback' + id).empty();
-
-                        $("#cartTotalQuantity").text("quantity: " + res.cart.totalQuantity);
-                        $("#cartTotalCost").text("$" + res.cart.totalCost);
-                    } else {
-                        $.each(res.errorMessages, function (key, value) {
-                            $('#feedback' + id).text(value);
-                        });
-                    }
-                },
-                error: function (e) {
-                    console.log("ERROR : ", e);
-
-                    const mes = $.parseJSON(e.responseText);
-                    $('#feedback' + id).text(mes.message);
-                }
-            })
-        }
     </script>
 </head>
 <body class="product-list">

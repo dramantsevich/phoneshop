@@ -46,30 +46,4 @@ public class AjaxCartController {
 
         return ajaxResponse;
     }
-
-    @PostMapping(value = "/update")
-    public AjaxResponseDTO update(@Valid @RequestBody CartItemDTO cartItemDTO, BindingResult result,
-                                  HttpServletRequest request) {
-        AjaxResponseDTO ajaxResponse = new AjaxResponseDTO();
-
-        if (result.hasErrors()) {
-            Map<String, String> errors = result.getFieldErrors().stream()
-                    .collect(
-                            Collectors.toMap(FieldError::getField, FieldError::getDefaultMessage)
-                    );
-
-            ajaxResponse.setValidated(false);
-            ajaxResponse.setErrorMessages(errors);
-        } else {
-            Cart cart = cartService.getCart(request);
-
-            cartService.update(cart, cartItemDTO.getId(), cartItemDTO.getQuantity());
-
-            ajaxResponse.setValidated(true);
-            ajaxResponse.setCart(cart);
-        }
-
-        return ajaxResponse;
-    }
-
 }
