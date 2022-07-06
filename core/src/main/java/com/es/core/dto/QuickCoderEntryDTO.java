@@ -7,10 +7,10 @@ import javax.validation.constraints.Positive;
 
 @Data
 public class QuickCoderEntryDTO {
-    @NotNull(message = "Product not found, enter number")
+    @NotNull(message = "Enter number")
     @Positive(message = "Value must be greater than 0")
     private Long id;
-    @NotNull(message = "Not null")
+    @NotNull(message = "Enter number")
     @Positive(message = "Value must be greater than 0")
     private Long quantity;
 }

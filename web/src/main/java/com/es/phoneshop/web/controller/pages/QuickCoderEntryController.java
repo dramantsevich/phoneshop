@@ -1,6 +1,5 @@
 package com.es.phoneshop.web.controller.pages;
 
-import com.es.core.dto.QuickCoderEntryDTO;
 import com.es.core.dto.ValidQuickCoderEntryList;
 import com.es.core.exception.OutOfStockException;
 import com.es.core.model.cart.Cart;
@@ -14,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
+import java.util.concurrent.atomic.AtomicInteger;
 
 @Controller
 @RequestMapping(value = "/quickCoderEntry")
@@ -33,40 +33,48 @@ public class QuickCoderEntryController {
 
     @PostMapping
     public String add(@ModelAttribute("quickCoderEntryList") @Valid ValidQuickCoderEntryList validQuickCoderEntryList,
-                      BindingResult result,
-                      Model model,
-                      HttpServletRequest request) {
+                      BindingResult result, Model model, HttpServletRequest request) {
         Cart cart = cartService.getCart(request);
 
         if (result.hasErrors()) {
             model.addAttribute("errorMessage", "There where errors");
-        } else {
-            int i = 0;
+        }
+        AtomicInteger i = new AtomicInteger();
 
-            try {
-                for (QuickCoderEntryDTO item : validQuickCoderEntryList.getList()) {
+        validQuickCoderEntryList.getList().forEach(item -> {
+            String field = "list[" + i.get() + "]";
+
+            if (!(result.hasFieldErrors(field + ".id") || result.hasFieldErrors(field + ".quantity"))) {
+                try {
                     cartService.addPhone(cart, item.getId(), item.getQuantity());
 
                     item.setId(null);
                     item.setQuantity(null);
 
-                    i++;
+                    model.addAttribute("successMessage", "item's added to cart");
+                } catch (EmptyResultDataAccessException | OutOfStockException e) {
+                    handleErrors(result, i, e);
                 }
-
-                model.addAttribute("successMessage", i + " entity added to cart");
-            } catch (EmptyResultDataAccessException e) {
-                result.rejectValue("list[" + i + "].id", "error.id", "Product not found");
-
-                model.addAttribute(result.getModel());
-                model.addAttribute("errorMessage", "There where errors -> " + (i + 1) +" product not found");
-            } catch (OutOfStockException e) {
-                model.addAttribute("cart", cart);
-
-                return "error";
             }
-        }
+            i.getAndIncrement();
+        });
+
+
+        model.addAttribute(result.getModel());
         model.addAttribute("cart", cart);
 
         return "quickCoderEntry";
+    }
+
+    private void handleErrors(BindingResult result, AtomicInteger i, Exception e) {
+        String idField = "list[" + i.get() + "].id";
+        String errorCode = "error.id";
+
+        if (e.getClass() == EmptyResultDataAccessException.class) {
+            result.rejectValue(idField, errorCode, "Product not found");
+        } else if (e.getClass() == OutOfStockException.class) {
+            result.rejectValue(idField, errorCode, "Out of stock");
+        }
+
     }
 }
