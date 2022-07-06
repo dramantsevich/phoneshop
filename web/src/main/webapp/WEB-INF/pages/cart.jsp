@@ -8,6 +8,9 @@
         <div class=”row”>
             <div class="col-md-6">
                 <div class="row">
+                    <c:if test="${not empty errorMessage}">
+                        <h4 style="color: red">${errorMessage}</h4>
+                    </c:if>
                     <form:form method="post" modelAttribute="cartDTOList" action="/cart/update">
                         <table>
                             <thead>
@@ -33,12 +36,9 @@
                                     <td>${item.stock.phone.displaySizeInches}"</td>
                                     <td>$${item.stock.phone.price}</td>
                                     <td>
-                                        <form:input path="list[${status.index}].quantity" value="${item.quantity}"/>
+                                        <form:input path="list[${status.index}].quantity"/>
                                         <form:errors path="list[${status.index}].quantity" cssStyle="color:red"/>
-                                        <form:input path="list[${status.index}].itemId" type="hidden" value="${item.itemId}"/>
-<%--                                        <input id="${item.stock.phone.id}" class="quantity" name="quantity${item.stock.phone.id}" value="${item.quantity}"/>--%>
-<%--                                        <input type="hidden" name="hiddenProductId" class="hiddenProductId" value='${item.stock.phone.id}'/>--%>
-<%--                                        <div style="color: red" id="feedback${item.stock.phone.id}"></div>--%>
+                                        <form:input path="list[${status.index}].itemId" type="hidden"/>
                                     </td>
                                     <td>
                                         <button form="deleteCartItem" id="btn-submit1" class="btn btn-primary delete"
@@ -46,9 +46,6 @@
                                                 formaction="${pageContext.request.contextPath}/cart/${item.stock.phone.id}">
                                             Delete
                                         </button>
-<%--                                        <input id="btn-submit" type="submit" class="btn btn-primary addToCart" name="button"--%>
-<%--                                               value="Update"--%>
-<%--                                               onclick="updateCart(${item.stock.phone.id}, ${cart.totalQuantity}, ${cart.totalCost})"/>--%>
                                     </td>
                                 </tr>
                             </c:forEach>
