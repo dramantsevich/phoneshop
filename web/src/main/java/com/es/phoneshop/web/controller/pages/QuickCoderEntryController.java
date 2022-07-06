@@ -1,5 +1,6 @@
 package com.es.phoneshop.web.controller.pages;
 
+import com.es.core.dto.QuickCoderEntryDTO;
 import com.es.core.dto.ValidQuickCoderEntryList;
 import com.es.core.exception.OutOfStockException;
 import com.es.core.model.cart.Cart;
@@ -13,7 +14,6 @@ import org.springframework.web.bind.annotation.*;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
-import java.util.concurrent.atomic.AtomicInteger;
 
 @Controller
 @RequestMapping(value = "/quickCoderEntry")
@@ -39,12 +39,11 @@ public class QuickCoderEntryController {
         if (result.hasErrors()) {
             model.addAttribute("errorMessage", "There where errors");
         }
-        AtomicInteger i = new AtomicInteger();
 
-        validQuickCoderEntryList.getList().forEach(item -> {
-            String field = "list[" + i.get() + "]";
+        for (int i = 0; i < validQuickCoderEntryList.getList().size(); i++) {
+            QuickCoderEntryDTO item = validQuickCoderEntryList.getList().get(i);
 
-            if (!(result.hasFieldErrors(field + ".id") || result.hasFieldErrors(field + ".quantity"))) {
+            if (!hasIdOrQuantityError(result, i)) {
                 try {
                     cartService.addPhone(cart, item.getId(), item.getQuantity());
 
@@ -56,8 +55,7 @@ public class QuickCoderEntryController {
                     handleErrors(result, i, e);
                 }
             }
-            i.getAndIncrement();
-        });
+        }
 
 
         model.addAttribute(result.getModel());
@@ -66,8 +64,14 @@ public class QuickCoderEntryController {
         return "quickCoderEntry";
     }
 
-    private void handleErrors(BindingResult result, AtomicInteger i, Exception e) {
-        String idField = "list[" + i.get() + "].id";
+    private boolean hasIdOrQuantityError(BindingResult result, int i) {
+        String field = "list[" + i + "]";
+
+        return result.hasFieldErrors(field + ".id") || result.hasFieldErrors(field + ".quantity");
+    }
+
+    private void handleErrors(BindingResult result, int i, Exception e) {
+        String idField = "list[" + i + "].id";
         String errorCode = "error.id";
 
         if (e.getClass() == EmptyResultDataAccessException.class) {
